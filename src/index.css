@@ -1,0 +1,78 @@
+@import "tailwindcss";
+@import 'tailwind-scrollbar-hide/v4';
+
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  background-color: rgb(255, 243, 225);
+
+}
+
+body{
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  /* color:#2f2f2f; */
+
+}
+
+h1,h2,h3,h4{
+  font-family: "Quicksand", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+
+.logo{
+  font-family: "Caveat Brush", cursive;
+  font-weight: 600;
+  font-size: xx-large;
+  font-style: normal;
+  color:#f4a52c;
+
+}
+
+.link{
+  cursor:pointer;
+}
+.text-link{
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.button , .button-link{
+  background-color: #f4a52c;
+  color:white;
+  border-radius: 2em;
+  padding:8px 14px;
+  font-weight: bold;
+  cursor:pointer;
+}
+.button:hover{
+  background-color: #fa7a3d;
+}
+
+.swiper-pagination{
+
+}
+
+.swiper-pagination-bullet{
+  width: 24px;
+  height: 12px;
+  background-color: #a9a9a9;
+  border-radius: 9999px;   
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  
+}
+
+.swiper-pagination-bullet-active{
+  width: 24px;
+  background-color: #f4a52c;
+  opacity: 1;
+}
