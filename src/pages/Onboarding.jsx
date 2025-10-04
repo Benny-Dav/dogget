@@ -38,12 +38,12 @@ const Onboarding = () => {
 
           (<SwiperSlide key={slide.id}>
             <div className=" flex flex-col h-full items-center text-center md:pt-6">
-              <img src={slide.image} alt="" className="w-90 h-90 md:w-70 md:h-70 object-contain" />
+              <img src={slide.image} alt="" className="w-70 h-60 md:w-70 md:h-70 object-contain" />
               <h2 className="text-3xl md:text-2xl font-bold my-4">{slide.title}</h2>
               <p className="text-gray-600 text-xl md:text-lg mt-2 md:w-[70%] md:mx-auto ">{slide.subtitle}</p>
 
               {id === onboardingSlides.length - 1 && activeId === id && (
-                <button onClick={()=>navigate("/home")} className='cursor-pointer mt-6 w-[60%] md:w-[50%] px-6 md:px-4 py-3 md:py-2 bg-[#f4a52c] text-white text-xl md:text-sm font-semibold md:font-bold rounded-4xl relative bottom-0'>{slide.buttonText}</button>
+                <button onClick={()=>navigate("/home")} className='button cursor-pointer mt-4 w-[50%] md:w-[50%] px-6 md:px-4 py-3 md:py-2 bg-[#f4a52c] text-white text-xl md:text-sm font-semibold md:font-bold rounded-4xl relative bottom-0'>{slide.buttonText}</button>
               )}
             
             </div>

@@ -3,10 +3,10 @@ import { Dog, PawPrint, PawPrintIcon, ShoppingCart } from "lucide-react";
 const Navbar=()=>{
 
   return(
-    <nav className=" py-4 px-6 flex justify-between items-center">
+    <nav className=" py-4 px-6 flex justify-between items-center bg-[#F7F4ED]">
       {/* mobile menu button */}
-      <div className="w-12 h-12 shadow-gray-300 shadow-lg rounded-full flex justify-center items-center">
-      <PawPrint className="text-[#f4a52c] font-extrabold h-8 w-8"/>
+      <div className="w-12 h-12 bg-white rounded-xl flex justify-center items-center">
+      <PawPrint className="text-[#f4a52c] bg-white font-extrabold h-8 w-8"/>
       </div>
 
       {/* logo */}

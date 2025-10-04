@@ -28,16 +28,16 @@ const HeroSection = () => {
 
 
   return (
-    <section className='h-auto py-4 px-6 flex flex-col gap-6'>
+    <section className='h-auto py-4 px-6 flex flex-col gap-6 bg-[#F7F4ED]'>
       {/* search bar */}
       <div className='flex justify-center items-center'>
-        <input type="text" placeholder='Search for products' className='bg-gray-100 py-3 px-12 rounded-full w-full' />
+        <input type="text" placeholder='Search for products' className='bg-white py-3 px-12 rounded-xl w-full' />
         <span className='absolute left-8'><Search className='text-gray-400 h-6 w-6 font-semibold' /></span>
       </div>
 
       <main className='h-auto flex flex-col gap-6'>
         {/* hero ad */}
-        <div className='h-60 rounded-2xl'>
+        <div className='h-50 rounded-2xl'>
           <img src="https://res.cloudinary.com/dfb2hl46r/image/upload/v1759078352/Crunchy_Coconut_Treats_ivfsff.jpg" alt="" className='object-cover object-center h-full w-full rounded-2xl' />
         </div>
 
@@ -63,16 +63,12 @@ const HeroSection = () => {
 
           {/* top recommeded product */}
           <div className='w-full md:w-[35%] py-2'>
-            <div className='bg-white rounded-lg p-4 shadow-lg'>
-              <div className='h-[200px] md:h-[250px] mb-4'>
-                <img className="h-full w-full object-contain" src="https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567834/pngwing.com_29_zeasos.png" alt="" />
-              </div>
-              <div className='flex flex-col gap-2'>
-                <h3 className='font-extrabold text-lg'>Evolve Dietary Kibble 12lb</h3>
-                <p className='text-sm text-gray-600'>Made with easy-to-digest grain-free carbs along with prebiotics </p>
-                <p className="text-lg text-[#fa7a3d] font-extrabold">$20.00</p>
-              </div>
-            </div>
+            <ProductCard 
+            image="https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567834/pngwing.com_29_zeasos.png"
+            title="Evolve Dietary Kibble"
+            brief="Made with easy-to-digest grain-free carbs along with prebiotics "
+            quantity="12lb"
+            price="$20.00"/>
           </div>
 
           {/* recommended grid */}
@@ -81,7 +77,7 @@ const HeroSection = () => {
               <ProductCard
                 key={product.id}
                 image={product.image}
-                title={product.title}
+                title={product.title} 
                 brief={product.brief}
                 quantity={product.quantity}
                 price={product.price}

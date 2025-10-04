@@ -16,7 +16,7 @@ const HomeLayout = () => {
       </main>
 
       <footer className='mt-[8vh]'>
-        <BottomMenu />
+        {/* <BottomMenu /> */}
       </footer>
 
     </div>

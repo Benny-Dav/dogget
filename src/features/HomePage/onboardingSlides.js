@@ -22,7 +22,7 @@ export const onboardingSlides=[
     {
         id:3,
         title:"Start Your Journey Today",
-        subtitle:"Shop for your pets or become a vendor and grow your business with us",
+        subtitle:"Become a vendor and grow your business with us",
         buttonText:"Get Started",
         image:vendor,
         

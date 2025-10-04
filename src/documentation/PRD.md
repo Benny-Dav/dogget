@@ -1,105 +1,270 @@
-📱 Dogget Mobile PWA — Pet Store E-commerce Platform
-Stack: React + Vite, Firebase Auth + Firestore, Tailwind CSS (Mobile-Only), Zustand, React Hook Form, Paystack, PWA
+Dogget E-Commerce PWA — MVP Documentation
 
-🎯 MVP Phase 1: E-commerce Pet Store (Weeks 1–4)
-🛒 Core Shopping Experience
-Purpose: Launch a mobile-first online pet store for supplies and products.
+Product: Dogget
+Feature: Dog Care Products E-Commerce (MVP)
+Author: Benedicta
+Date: October 3, 2025
 
-Frontend Tasks:
+Overview
 
-Mobile-optimized product catalog with categories (Food, Toys, Accessories, Health)
+The Dogget E-Commerce PWA is a mobile-first progressive web app designed to enable users to browse, purchase, and manage orders of dog care products. Vendors can create stores, add products, and manage their catalog through a vendor dashboard.
 
-Product detail pages with images, descriptions, pricing
+The MVP will focus primarily on the frontend user experience, built with dummy data and basic state management. Backend integrations (Node/Express + Firebase Auth + payments) will follow in future phases.
 
-Shopping cart with add/remove functionality
+Purpose:
 
-User authentication (signup/login)
+Provide a responsive and installable PWA for dog owners to purchase essential dog care products.
 
-Checkout flow with Paystack integration
+Deliver a vendor-facing dashboard to manage products and view store activity.
 
-Order confirmation and history
+Establish a scalable frontend foundation ready for backend and API integrations.
 
-User Journey:
+System Architecture
 
-Customer browses products → adds to cart
+Core Components
+1. Homepage (/src/pages/Home.tsx)
 
-Creates account or logs in
+Route: /
 
-Completes payment via Paystack
+Purpose: Showcase brand, highlight categories, and drive users into shopping flow.
 
-Receives order confirmation
+Key Features:
 
-Firebase Notes:
+Hero banner with featured call-to-action.
 
-Products: /products/{productId}
+Product categories (Food, Toys, Health, Accessories).
 
-Orders: /orders/{orderId}
+Recommended products grid.
 
-Users: /users/{uid}
+Bottom mobile nav bar (Home, Categories, Cart, Profile).
 
-Cart: Local storage + Zustand state management
+2. Product Catalog Page (/src/pages/Products.tsx)
 
-PWA Features:
+Route: /products
 
-Offline product browsing
+Purpose: Display all products with filtering.
 
-Add to home screen
+Key Features:
 
-Push notifications for order updates
+Grid display of products with image, name, and price.
 
-📅 Phase 2: Service Booking System (Future - Weeks 5–8)
-🩺 Vet & Grooming Appointments
-Purpose: Allow customers to book veterinary and grooming services.
+Filters (category, price).
 
-Planned Features:
+Search bar (optional for MVP).
 
-Service provider listings
+3. Product Detail Page (/src/pages/ProductDetail.tsx)
 
-Appointment calendar
+Route: /products/:id
 
-Booking management
+Purpose: Provide details for a single product.
 
-Service provider dashboard
+Key Features:
 
-Payment integration for services
+Large product image.
 
-Firebase Notes:
+Name, price, description.
 
-Vendors: /vendors/{vendorId}
+Add to Cart button.
 
-Bookings: /bookings/{bookingId}
+Suggested products (“You may also like”).
 
-Availability slots in Firestore
+4. Cart Page (/src/pages/Cart.tsx)
 
-🌟 Phase 3: Community Features (Future - Weeks 9–12)
-🐾 Pet Owner Community
-Purpose: Build a community platform for pet owners.
+Route: /cart
 
-Planned Features:
+Purpose: Review and manage cart before checkout.
 
-Pet profiles (Pawfile)
+Key Features:
 
-Lost pet reporting with map
+List of products in cart (with quantity + remove).
 
-Community forum
+Cart total calculation.
 
-Pet care tips and articles
+Checkout button.
 
-User-generated content
+5. Auth Pages (/src/features/auth/)
 
-Firebase Notes:
+Routes: /register, /login
 
-Pets: /users/{uid}/pets
+Purpose: Provide simple sign-up/login.
 
-Lost pets: /lostPets/{reportId}
+Key Features:
 
-Forum posts: /posts/{postId}
+Toggle between Register/Login in one component.
 
-📦 Optional Enhancements (Post-MVP)
-Feature	Description
-Notifications	Firebase Cloud Messaging or EmailJS alerts
-Reviews & Ratings	Let customers rate vendors after service
-Chat	Use Firebase Realtime DB or 3rd party widget
-Community Forum	Firestore + post/comment system
-Admin Panel	Hidden route with admin role to moderate data
-Vendor Analytics	Show bookings, sales, earnings charts
+Inputs: Name, Email, Password (Register) / Email, Password (Login).
+
+Continue with Google (future Firebase integration).
+
+6. Checkout Page (/src/pages/Checkout.tsx)
+
+Route: /checkout
+
+Purpose: Capture order details before placing an order.
+
+Key Features:
+
+Shipping information form (name, address, phone).
+
+Order summary.
+
+Mock “Pay Now” button.
+
+7. Order Confirmation Page (/src/pages/OrderConfirmation.tsx)
+
+Route: /orders/:id
+
+Purpose: Show order success.
+
+Key Features:
+
+Thank you message.
+
+Order summary.
+
+View My Orders button.
+
+8. Profile Page (/src/pages/Profile.tsx)
+
+Route: /profile
+
+Purpose: Allow user to view account details.
+
+Key Features:
+
+User info (name, email).
+
+Order history (static for MVP).
+
+Logout button.
+
+9. Vendor Dashboard (Phase One Lite) (/src/pages/vendor/Dashboard.tsx)
+
+Route: /vendor
+
+Purpose: Allow vendors to manage products.
+
+Key Features:
+
+Add product (form).
+
+Product list view.
+
+Edit/Delete product actions.
+
+User Journey Flow
+Customer Flow
+
+Homepage → Product Catalog → Product Detail → Cart → Checkout → Order Confirmation → Profile.
+
+Vendor Flow
+
+Login/Register → Vendor Dashboard → Add Product → Manage Products.
+
+Feature Breakdown
+Customer Features
+
+Browse homepage and categories.
+
+View product catalog.
+
+View product detail.
+
+Add/remove items from cart.
+
+Proceed to checkout (mock).
+
+Login/Register (UI only).
+
+View profile and past orders (dummy data).
+
+Vendor Features
+
+Vendor login/register (UI).
+
+Vendor dashboard with add product form.
+
+Manage product list (edit/delete).
+
+Technical Features
+
+PWA support: installable, offline-ready (service worker + manifest).
+
+State management with Zustand (cart + auth).
+
+Responsive UI with Tailwind.
+
+Routing with React Router.
+
+Form validation with React Hook Form.
+
+Data Structure & Types (Mock Data for Frontend)
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: 'food' | 'toys' | 'accessories' | 'health';
+  description: string;
+  image: string;
+}
+
+interface CartItem {
+  productId: string;
+  quantity: number;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+}
+
+interface Order {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  total: number;
+  status: 'pending' | 'confirmed' | 'delivered';
+}
+
+Technical Implementation Notes
+
+Frontend First: All data will come from mock objects until backend is ready.
+
+Firebase Auth: Reserved for Phase 2.
+
+Payments: Mock “Pay Now” button for MVP, real Paystack integration later.
+
+Vendor Dashboard: Local-only state management for now.
+
+Current Implementation Status
+✅ Planned for MVP
+
+Homepage UI.
+
+Catalog & Product pages.
+
+Cart + Checkout flow.
+
+Auth UI (login/register).
+
+Vendor dashboard lite.
+
+PWA configuration.
+
+🔧 Future Enhancements
+
+Real Firebase Auth.
+
+Node.js/Express backend.
+
+Database for products, orders, and vendors.
+
+Payment integration (Paystack/Stripe).
+
+Order tracking system.
+
+Conclusion
+
+This PRD defines the Dogget MVP as a frontend-first PWA with essential e-commerce features for customers and a basic vendor dashboard. The system is designed to be easily extended with backend integrations, payments, and authentication in later phases.

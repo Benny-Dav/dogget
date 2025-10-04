@@ -30,9 +30,9 @@ const ProductCard = ({image, title, brief, price, quantity,onAddToCart, discount
 
       {/* text area */}
       <div className='bg-white rounded-t-2xl flex flex-col justify-between items-center px-6 py-2 rounded-b-2xl gap-3'>
-        <h4 className='text-base font-bold text-gray-800'>{title}</h4>
+        <h4 className='text-base font-bold text-gray-800 line-clamp-2'>{title}</h4>
         <span className=''>
-        <p className='text-sm text-gray-600'>{brief} <span className='ml-2 inline-flex border border-gray-400 rounded-xl w-12 h-6 px-1 flex justify-center items-center'>{quantity}</span></p>
+        <p className='text-sm text-gray-600 line-clamp-3'>{brief} <span className='ml-2 inline-flex border border-gray-400 rounded-xl w-12 h-6 px-1 flex justify-center items-center'>{quantity}</span></p>
        
         </span>
         
@@ -40,10 +40,10 @@ const ProductCard = ({image, title, brief, price, quantity,onAddToCart, discount
 {/* price and add to cart */}
         <div className='w-full flex justify-between items-center pt-2'>
           <div className='flex justify-center items-center '>
-            <p className='font-extrabold text-[#f4a52c] text-xl '>{price}</p>
+            <p className='font-extrabold text-[#f4a52c] text-lg '>{price}</p>
           </div>
           <div className='flex justify-center items-center'>
-            <button className='cursor-pointer px-2 md:px-4 py-2 md:py-2 bg-[#f4a52c] text-white text-md font-semibold md:font-bold rounded-4xl '><ShoppingBasket/></button>
+            <button className='cursor-pointer px-2 md:px-4 py-1 md:py-2 bg-[#f4a52c] text-white text-base font-semibold md:font-bold rounded-4xl '><ShoppingBasket/></button>
           </div>
         </div>
 
