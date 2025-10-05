@@ -5,6 +5,7 @@ import ShopSection from '../features/HomePage/ShopSection.jsx'
 import VetSection from '../features/HomePage/VetSection.jsx'
 import TrustSection from '../features/HomePage/TrustSection.jsx'
 import AdSection from '../features/HomePage/AdSection.jsx'
+import CTASection from '../features/HomePage/CTASection.jsx'
 
 const Home = () => {
   return (
@@ -13,7 +14,7 @@ const Home = () => {
     <HeroSection/>
     <AdSection/>
     <TrustSection/>
-    
+    <CTASection/>
     {/* <FeatureCards/> */}
     {/* <ShopSection/> */}
     {/* <VetSection/> */}

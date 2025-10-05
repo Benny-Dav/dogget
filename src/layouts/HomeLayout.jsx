@@ -2,23 +2,20 @@ import React from 'react'
 import Navbar from '../reusableComponents/Navbar'
 import { Outlet } from 'react-router-dom'
 import BottomMenu from '../reusableComponents/BottomMenu'
+import Foot from '../reusableComponents/Footer'
 
 const HomeLayout = () => {
   return (
     <div className='flex flex-col justify-between'>
       <main className='pb-2'>
-        <header>
-          <Navbar />
-        </header>
 
+        <Navbar />
 
         <Outlet />
+
+
+
       </main>
-
-      <footer className='mt-[8vh]'>
-        {/* <BottomMenu /> */}
-      </footer>
-
     </div>
   )
 }
