@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import 'tailwind-scrollbar-hide/v4';
-
+@plugin "daisyui";
 
 * {
   box-sizing: border-box;
@@ -11,7 +11,7 @@
 html, body {
   overflow-x: hidden;
   max-width: 100%;
-  background-color: rgb(255, 243, 225);
+  background-color: #f9f9fc;
 
 }
 

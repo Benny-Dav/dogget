@@ -8,51 +8,10 @@ const shopCategories=[
     {id:3, name:"Accessories"},
     {id:4, name:"Shampoos"}
 ]
-const shopProducts=[
-    {id:1,
-        image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567835/pngwing.com_30_rc5lzt.png", 
-         title:"Foster Oatmeal Treats",
-         quantity:"8lb",
-        price:"$16.00",
-        },
-        {id:2,
-            image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567584/pngwing.com_27_sd9l7x.png",
-            title:"Pedigree Chicken & Rice",
-            quantity:"12lb",
-            price:"$14.85",
-        },
-        {
-            id:3,
-            image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567834/pngwing.com_28_sjnpkd.png",
-            title:"Royal Canin Digestive ",
-            quantity:"20kg",
-            price:"$35.50"
-        },
-        {
-            id:4,
-            image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567838/pngwing.com_31_bn6uws.png",
-            title:"Brit Premium Kibble",
-            quantity:"8lb",
-            price:"$20.00"
-        },
-        {id:5,
-            image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567584/pngwing.com_27_sd9l7x.png",
-            title:"Pedigree Chicken & Rice",
-            quantity:"12lb",
-            price:"$14.85",
-        },
-        {
-            id:6,
-            image:"https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567838/pngwing.com_31_bn6uws.png",
-            title:"Brit Premium Kibble",
-            quantity:"8lb",
-            price:"$20.00"
-        }
-        
-]
+
 const ShopSection = () => {
   return (
-    <section className='min-h-screen bg-gradient-to-br from-[#f2f2f2] to-[#fffbe6] py-12 px-4 md:px-8 lg:px-12'>
+    <section className='min-h-screen py-12 px-4 md:px-8 lg:px-12'>
         <div className='max-w-7xl mx-auto'>
             <h1 className='text-center text-3xl md:text-4xl font-extrabold leading-tight mb-6'>Shop by Category</h1>
 

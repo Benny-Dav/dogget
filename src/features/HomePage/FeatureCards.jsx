@@ -33,7 +33,7 @@ const features = [
 const FeatureCards = () => {
 
     return (
-        <section className='relative md:absolute flex justify-center items-center md:-mt-20 lg:-mt-24 z-40 mx-auto w-full px-4 py-8 md:py-0'>
+        <section className='h-auto relative md:absolute flex justify-center items-center md:-mt-20 lg:-mt-24 z-40 mx-auto w-full px-4 py-8 md:py-0'>
             <div className='max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6'>
             {features.map((feature)=>(
                 <div className="bg-white rounded-xl shadow-lg hover:shadow-xl p-4 md:p-5 flex md:flex-col items-center gap-3 md:gap-2 text-left md:text-center hover:scale-105 transition-all duration-200" key={feature.id}>

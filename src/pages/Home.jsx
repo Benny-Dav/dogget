@@ -6,6 +6,7 @@ import VetSection from '../features/HomePage/VetSection.jsx'
 import TrustSection from '../features/HomePage/TrustSection.jsx'
 import AdSection from '../features/HomePage/AdSection.jsx'
 import CTASection from '../features/HomePage/CTASection.jsx'
+import Foot from '../reusableComponents/Footer.jsx'
 
 const Home = () => {
   return (
@@ -15,6 +16,7 @@ const Home = () => {
     <AdSection/>
     <TrustSection/>
     <CTASection/>
+
     {/* <FeatureCards/> */}
     {/* <ShopSection/> */}
     {/* <VetSection/> */}

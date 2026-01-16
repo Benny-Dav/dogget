@@ -1,22 +1,23 @@
 import React from 'react'
-import Navbar from '../reusableComponents/Navbar'
+
 import { Outlet } from 'react-router-dom'
-import BottomMenu from '../reusableComponents/BottomMenu'
+
 import Foot from '../reusableComponents/Footer'
+import MainLayout from './MainLayout'
 
 const HomeLayout = () => {
   return (
-    <div className='flex flex-col justify-between'>
+  
+      <div className='flex flex-col justify-between absolute px-6'>
+
       <main className='pb-2'>
-
-        <Navbar />
-
-        <Outlet />
-
-
-
+        <Outlet/>
       </main>
+
+      <Foot/>
     </div>
+
+    
   )
 }
 
