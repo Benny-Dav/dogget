@@ -1,0 +1,61 @@
+// Phase 1 scope only: User + Address. Phase 2 fills in Vendor, Brand,
+// Category, Subcategory, Product, ProductImage, Cart, CartItem,
+// WishlistItem, Order, OrderItem, Payment, PayoutRun/Line, Review,
+// PromoCode, FxRate, Notification, AuditLog, CheckoutSession,
+// SearchQueryLog, HomeBanner per PRD §6.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+model User {
+  id              String    @id @default(cuid())
+  firebaseUid     String    @unique
+  email           String    @unique
+  name            String?
+  phone           String?
+  avatarUrl       String?
+  role            UserRole  @default(CUSTOMER)
+  preferredCurrency String  @default("GHS")
+  emailVerified   Boolean   @default(false)
+  bannedAt        DateTime?
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  addresses       Address[]
+
+  @@index([role])
+  @@index([deletedAt])
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label       String?
+  recipient   String
+  phone       String
+  line1       String
+  line2       String?
+  city        String
+  region      String
+  country     String   @default("GH")
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}

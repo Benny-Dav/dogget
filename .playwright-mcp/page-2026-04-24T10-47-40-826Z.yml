@@ -1,0 +1,125 @@
+- main [ref=e3]:
+  - generic [ref=e4]:
+    - navigation [ref=e5]:
+      - link "dogget" [ref=e6] [cursor=pointer]:
+        - /url: /home
+        - img [ref=e7]
+        - generic [ref=e12]: dogget
+      - generic [ref=e13]:
+        - link "Home" [ref=e14] [cursor=pointer]:
+          - /url: /home
+        - link "Wishlist" [ref=e15] [cursor=pointer]:
+          - /url: /wishlist
+        - link "Shop" [ref=e16] [cursor=pointer]:
+          - /url: /shop
+        - link "Cart" [ref=e17] [cursor=pointer]:
+          - /url: /cart
+        - link "Pawfile" [ref=e18] [cursor=pointer]:
+          - /url: /profile
+      - generic [ref=e19]:
+        - textbox "Search for products" [ref=e20]
+        - img [ref=e21]
+    - generic [ref=e24]:
+      - main [ref=e25]:
+        - generic [ref=e26]:
+          - main [ref=e28]:
+            - generic [ref=e30]:
+              - heading "Categories" [level=3] [ref=e31]
+              - generic [ref=e32]:
+                - generic [ref=e33] [cursor=pointer]:
+                  - img "Pet Food" [ref=e35]
+                  - paragraph [ref=e36]: Pet Food
+                - generic [ref=e37] [cursor=pointer]:
+                  - img "Health" [ref=e39]
+                  - paragraph [ref=e40]: Health
+                - generic [ref=e41] [cursor=pointer]:
+                  - img "Grooming" [ref=e43]
+                  - paragraph [ref=e44]: Grooming
+                - generic [ref=e45] [cursor=pointer]:
+                  - img "Accessories" [ref=e47]
+                  - paragraph [ref=e48]: Accessories
+            - generic [ref=e49]:
+              - heading "Recommended for you" [level=3] [ref=e50]
+              - generic [ref=e52]:
+                - figure [ref=e53]
+                - generic [ref=e54]:
+                  - heading "Evolve Dietary Kibble" [level=4] [ref=e55]
+                  - paragraph [ref=e56]:
+                    - text: Made with easy-to-digest grain-free carbs along with prebiotics
+                    - generic [ref=e57]: 12lb
+                  - generic [ref=e58]:
+                    - generic [ref=e59]: 12lb
+                    - generic [ref=e60]:
+                      - paragraph [ref=e62]: $20.00
+                      - button "Buy" [ref=e64] [cursor=pointer]:
+                        - text: Buy
+                        - img [ref=e65]
+              - generic [ref=e71]:
+                - generic [ref=e72]:
+                  - figure [ref=e73]
+                  - generic [ref=e74]:
+                    - heading "Foster Oatmeal Treats" [level=4] [ref=e75]
+                    - paragraph [ref=e76]:
+                      - text: Easy-to-digest grain-free carbs and prebiotics
+                      - generic [ref=e77]: 8lb
+                    - generic [ref=e78]:
+                      - generic [ref=e79]: 8lb
+                      - generic [ref=e80]:
+                        - paragraph [ref=e82]: $16.00
+                        - button "Buy" [ref=e84] [cursor=pointer]:
+                          - text: Buy
+                          - img [ref=e85]
+                - generic [ref=e91]:
+                  - figure [ref=e92]
+                  - generic [ref=e93]:
+                    - heading "Pedigree Chicken & Rice" [level=4] [ref=e94]
+                    - paragraph [ref=e95]:
+                      - text: Easy-to-digest grain-free carbs and prebiotics
+                      - generic [ref=e96]: 12lb
+                    - generic [ref=e97]:
+                      - generic [ref=e98]: 12lb
+                      - generic [ref=e99]:
+                        - paragraph [ref=e101]: $14.85
+                        - button "Buy" [ref=e103] [cursor=pointer]:
+                          - text: Buy
+                          - img [ref=e104]
+              - button "See All" [ref=e111] [cursor=pointer]
+          - generic [ref=e114]:
+            - heading "Why Trust Us?" [level=1] [ref=e115]
+            - main:
+              - generic [ref=e117]:
+                - generic [ref=e118]:
+                  - img [ref=e120]
+                  - generic [ref=e123]:
+                    - heading "Secure Payments" [level=3] [ref=e124]
+                    - paragraph [ref=e125]: Shop with confidence using secure payment
+                - generic [ref=e126]:
+                  - img [ref=e128]
+                  - generic [ref=e133]:
+                    - heading "Fast Delivery" [level=3] [ref=e134]
+                    - paragraph [ref=e135]: Get pet supplies delivered to your door
+                - generic [ref=e136]:
+                  - img [ref=e138]
+                  - generic [ref=e141]:
+                    - heading "Easy Returns" [level=3] [ref=e142]
+                    - paragraph [ref=e143]: 30-day hassle-free return policy
+                - generic [ref=e144]:
+                  - img [ref=e146]
+                  - generic [ref=e151]:
+                    - heading "Quality Products" [level=3] [ref=e152]
+                    - paragraph [ref=e153]: Trusted brands for your furry friends
+          - generic [ref=e155]:
+            - img [ref=e156]
+            - heading "Become a vendor!" [level=3] [ref=e159]
+            - paragraph [ref=e160]: Join the family as a vendor and start selling your products.
+            - button "Register Now" [ref=e161]
+      - generic [ref=e162]:
+        - generic [ref=e164]:
+          - img [ref=e165]
+          - paragraph [ref=e170]: dogget
+        - generic [ref=e171]:
+          - paragraph [ref=e172]: Privacy Policy
+          - paragraph [ref=e173]: Shipping and Returns
+          - paragraph [ref=e174]: Data Protection
+          - paragraph
+        - paragraph [ref=e175]: Dogget @2025
