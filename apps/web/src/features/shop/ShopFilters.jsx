@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ArrowUpDown } from "lucide-react";
-import { categories } from "../../content/categories";
+import { useCategories } from "../../lib/api/hooks";
 
 export const sortOptions = [
-  { value: "default", label: "Featured" },
+  { value: "featured", label: "Featured" },
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
   { value: "name-asc", label: "Name: A to Z" },
 ];
 
-const ShopFilters = ({ selectedCategory, onCategoryChange, sortBy, onSortChange }) => {
+const ShopFilters = ({ selectedCategorySlug, onCategoryChange, sortBy, onSortChange }) => {
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
+  const { data: categories = [] } = useCategories();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -32,8 +33,8 @@ const ShopFilters = ({ selectedCategory, onCategoryChange, sortBy, onSortChange 
       <div className="flex whitespace-nowrap gap-2 overflow-x-auto scrollbar-hide px-6 py-3">
         <button
           onClick={() => onCategoryChange(null)}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition ${
-            selectedCategory === null
+          className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition cursor-pointer ${
+            selectedCategorySlug === null
               ? "bg-[#f4a52c] text-white"
               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
           }`}
@@ -41,12 +42,12 @@ const ShopFilters = ({ selectedCategory, onCategoryChange, sortBy, onSortChange 
           All
         </button>
         {categories.map((cat) => {
-          const active = selectedCategory === cat.name;
+          const active = selectedCategorySlug === cat.slug;
           return (
             <button
               key={cat.id}
-              onClick={() => onCategoryChange(cat.name)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition ${
+              onClick={() => onCategoryChange(cat.slug)}
+              className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition cursor-pointer ${
                 active
                   ? "bg-[#f4a52c] text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"

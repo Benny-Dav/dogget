@@ -7,9 +7,10 @@ import dogRegister from "../../assets/dogRegister.svg";
 import { useAuthStore } from "../../stores/authStore";
 import { registerSchema, loginSchema } from "../../schemas/auth";
 
-const Register = () => {
+/** @param {{ mode?: "register" | "login" }} props */
+const Register = ({ mode = "register" }) => {
   const navigate = useNavigate();
-  const [isRegister, setIsRegister] = useState(true);
+  const isRegister = mode === "register";
   const [showPassword, setShowPassword] = useState(false);
 
   const user = useAuthStore((s) => s.user);
@@ -24,7 +25,6 @@ const Register = () => {
     register: field,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     resolver: zodResolver(isRegister ? registerSchema : loginSchema),
     defaultValues: { name: "", email: "", password: "" },
@@ -34,11 +34,12 @@ const Register = () => {
     if (user) navigate("/home", { replace: true });
   }, [user, navigate]);
 
-  const switchStatus = () => {
+  // Reset form-level error when switching between routes (login ↔ register).
+  useEffect(() => {
     clearError();
-    reset();
-    setIsRegister((v) => !v);
-  };
+  }, [mode, clearError]);
+
+  const switchTo = isRegister ? "/login" : "/register";
 
   const onSubmit = async (values) => {
     try {
@@ -178,7 +179,7 @@ const Register = () => {
               </p>
               <button
                 type="button"
-                onClick={switchStatus}
+                onClick={() => navigate(switchTo)}
                 className="text-sm text-[#f4a52c] font-semibold"
               >
                 {isRegister ? "Log In" : "Register"}

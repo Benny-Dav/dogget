@@ -6,6 +6,7 @@ import {
   logout as firebaseLogout,
   observeAuth,
 } from "../firebase/firebaseAuth";
+import { api } from "../lib/api";
 
 const toAuthUser = (firebaseUser) =>
   firebaseUser
@@ -45,9 +46,16 @@ const mapAuthError = (error) => {
   }
 };
 
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create((set) => ({
+  // Firebase user (client-side identity)
   user: null,
+  // Server User row from api.auth.session — has role, preferredCurrency, id, etc.
+  me: null,
+  // Cached Firebase ID token. Kept here so api/real.js can attach it to fetches.
+  idToken: null,
+
   initializing: true,
+  sessionLoading: false,
   submitting: false,
   error: null,
 
@@ -91,11 +99,28 @@ export const useAuthStore = create((set, get) => ({
 
   logout: async () => {
     await firebaseLogout();
-    set({ user: null });
+    set({ user: null, me: null, idToken: null });
   },
 
   subscribe: () =>
-    observeAuth((firebaseUser) => {
-      set({ user: toAuthUser(firebaseUser), initializing: false });
+    observeAuth(async (firebaseUser) => {
+      if (!firebaseUser) {
+        set({
+          user: null,
+          me: null,
+          idToken: null,
+          initializing: false,
+          sessionLoading: false,
+        });
+        return;
+      }
+      set({ user: toAuthUser(firebaseUser), initializing: false, sessionLoading: true });
+      try {
+        const idToken = await firebaseUser.getIdToken();
+        const me = await api.auth.session(idToken);
+        set({ me, idToken, sessionLoading: false });
+      } catch (error) {
+        set({ sessionLoading: false, error: mapAuthError(error) });
+      }
     }),
 }));
