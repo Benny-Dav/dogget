@@ -1,17 +1,10 @@
 import { Link } from "react-router-dom";
 import ProductCard from "../../reusableComponents/ProductCard";
-import { recomProducts } from "../../content/products";
-
-const featured = {
-  image:
-    "https://res.cloudinary.com/dfb2hl46r/image/upload/v1751567834/pngwing.com_29_zeasos.png",
-  title: "Evolve Dietary Kibble",
-  brief: "Made with easy-to-digest grain-free carbs along with prebiotics",
-  quantity: "12lb",
-  price: "$20.00",
-};
+import { useFeaturedProducts } from "../../lib/api/hooks";
 
 const RecommendedSection = () => {
+  const { data: products = [], isLoading } = useFeaturedProducts();
+
   return (
     <section className="px-6 py-3">
       <div className="flex items-center justify-between mb-4">
@@ -24,10 +17,14 @@ const RecommendedSection = () => {
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <ProductCard {...featured} />
-        {recomProducts.map((p) => (
-          <ProductCard key={p.id} {...p} />
-        ))}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[3/4] rounded-2xl bg-gray-100 animate-pulse"
+              />
+            ))
+          : products.map((p) => <ProductCard key={p.id} product={p} />)}
       </div>
     </section>
   );

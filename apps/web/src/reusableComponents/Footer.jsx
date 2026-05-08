@@ -7,9 +7,9 @@ const footerLinks = [
 ];
 
 const socials = [
-    { icon: Instagram, label: "Instagram", to: "#" },
-    { icon: Facebook, label: "Facebook", to: "#" },
-    { icon: Twitter, label: "Twitter", to: "#" },
+    { icon: <Instagram className="h-4 w-4" />, label: "Instagram", to: "#" },
+    { icon: <Facebook className="h-4 w-4" />, label: "Facebook", to: "#" },
+    { icon: <Twitter className="h-4 w-4" />, label: "Twitter", to: "#" },
 ];
 
 const Foot = () => {
@@ -29,14 +29,14 @@ const Foot = () => {
             </div>
 
             <div className="flex justify-center gap-4 mb-5">
-                {socials.map(({ icon: Icon, label, to }) => (
+                {socials.map(({ icon, label, to }) => (
                     <a
                         key={label}
                         href={to}
                         aria-label={label}
                         className="h-9 w-9 rounded-full bg-[#f4a52c]/10 flex items-center justify-center text-[#f4a52c] hover:bg-[#f4a52c] hover:text-white transition"
                     >
-                        <Icon className="h-4 w-4" />
+                        {icon}
                     </a>
                 ))}
             </div>

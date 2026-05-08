@@ -1,4 +1,3 @@
-import { section } from "framer-motion/client"
 import { Calendar, PawPrint, Scissors, Stethoscope } from "lucide-react"
 import PawScatter from "../HomePage/PawScatter"
 

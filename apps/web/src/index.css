@@ -12,6 +12,10 @@ html, body {
   background-color: #e9e9ef;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body{
   font-family: "Nunito", sans-serif;
   font-optical-sizing: auto;
@@ -24,6 +28,22 @@ h1,h2,h3,h4{
   font-family: "Quicksand", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #1f2937;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 
@@ -58,6 +78,10 @@ h1,h2,h3,h4{
 
 .swiper-pagination{
 
+}
+
+.onboarding-swiper .swiper-pagination{
+  bottom: calc(0.5rem + env(safe-area-inset-bottom)) !important;
 }
 
 .swiper-pagination-bullet{

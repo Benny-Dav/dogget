@@ -1,4 +1,5 @@
 import { ShoppingBag } from "lucide-react"
+import { Link } from "react-router-dom"
 
 const CTASection = () => {
     return (
@@ -10,9 +11,9 @@ const CTASection = () => {
                 </div>
                 <h3 className="font-bold text-2xl mb-1">Become a vendor!</h3>
                 <p className="text-sm text-white/90 mb-5">Join the family as a vendor and start selling your products.</p>
-                <button className="w-full py-3 bg-white text-[#f4a52c] font-semibold rounded-full hover:bg-white/90 transition">
+                <Link to="/vendor/apply" className="w-full py-3 bg-white text-[#f4a52c] font-semibold rounded-full hover:bg-white/90 transition">
                     Register Now
-                </button>
+                </Link>
             </div>
         </section>
     )

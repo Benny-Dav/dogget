@@ -5,5 +5,5 @@ export const navItems = [
   { to: "/wishlist", icon: HeartPlus, label: "Wishlist" },
   { to: "/shop", icon: Store, label: "Shop" },
   { to: "/cart", icon: ShoppingCart, label: "Cart" },
-  { to: "/profile", icon: Dog, label: "Pawfile" },
+  { to: "/profile", icon: Dog, label: "Pawfile", disabled: true, phaseLabel: "Phase 6" },
 ];
