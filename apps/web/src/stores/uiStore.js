@@ -6,7 +6,8 @@ let toastSeq = 0;
 
 export const useUIStore = create((set, get) => ({
   filterDrawerOpen: false,
-  cartSheetOpen: false,
+  checkoutSheetOpen: false,
+  confirmDialog: null,
   /** @type {{id: number, kind: "info"|"success"|"error", message: string}[]} */
   toasts: [],
 
@@ -14,8 +15,20 @@ export const useUIStore = create((set, get) => ({
   closeFilters: () => set({ filterDrawerOpen: false }),
   toggleFilters: () => set({ filterDrawerOpen: !get().filterDrawerOpen }),
 
-  openCart: () => set({ cartSheetOpen: true }),
-  closeCart: () => set({ cartSheetOpen: false }),
+  openCheckout: () => set({ checkoutSheetOpen: true }),
+  closeCheckout: () => set({ checkoutSheetOpen: false }),
+
+  /**
+   * @param {{title: string, message: string, confirmLabel?: string, cancelLabel?: string, kind?: "danger"|"default", onConfirm: () => void}} config
+   */
+  confirm: (config) => set({ confirmDialog: config }),
+  cancelConfirm: () => set({ confirmDialog: null }),
+  runConfirm: () => {
+    const dialog = get().confirmDialog;
+    if (!dialog) return;
+    dialog.onConfirm?.();
+    set({ confirmDialog: null });
+  },
 
   /** @param {string} message @param {"info"|"success"|"error"} [kind] */
   toast: (message, kind = "info") => {

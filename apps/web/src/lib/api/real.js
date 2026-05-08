@@ -16,6 +16,7 @@ export const realApi = {
   products: {
     list: NOT_IMPLEMENTED("products.list"),
     get: NOT_IMPLEMENTED("products.get"),
+    byIds: NOT_IMPLEMENTED("products.byIds"),
     related: NOT_IMPLEMENTED("products.related"),
     featured: NOT_IMPLEMENTED("products.featured"),
   },
@@ -29,5 +30,14 @@ export const realApi = {
   users: {
     me: NOT_IMPLEMENTED("users.me"),
     update: NOT_IMPLEMENTED("users.update"),
+  },
+  cart: {
+    sync: NOT_IMPLEMENTED("cart.sync"),
+  },
+  wishlist: {
+    sync: NOT_IMPLEMENTED("wishlist.sync"),
+  },
+  checkout: {
+    session: NOT_IMPLEMENTED("checkout.session"),
   },
 };

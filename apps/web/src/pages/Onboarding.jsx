@@ -1,62 +1,69 @@
-import React from 'react'
-import { onboardingSlides } from '../features/HomePage/onboardingSlides';
-import PawScatter from '../features/HomePage/PawScatter';
-import { Swiper, SwiperSlide } from 'swiper/react';
-
-
-import { Pagination, Navigation, Autoplay } from 'swiper/modules';
-import { button } from 'framer-motion/client';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import { onboardingSlides } from "../features/HomePage/onboardingSlides";
+import PawScatter from "../features/HomePage/PawScatter";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const [activeId, setActiveId] = useState(0);
 
   return (
-    <section className="h-screen relative bg-gradient-to-br from-[#f2f2f2] to-[#fffbe6] flex flex-col md:flex-row items-center justify-between px-4 md:px-8 lg:px-12 pt-20 pb-6 md:py-0 overflow-hidden">
-      {/* PawScatter as subtle background */}
-      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden opacity-50">
-        <PawScatter pawCount={15} width={1200} height={800} />
+    <section className="relative flex h-dvh max-h-dvh flex-col overflow-hidden bg-gradient-to-br from-[#f2f2f2] to-[#fffbe6] px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-50">
+        <PawScatter
+          pawCount={15}
+          width={430}
+          height={920}
+          className="mx-auto h-full w-full max-w-[430px]"
+          style={{ width: "100%", height: "100%", marginTop: 0 }}
+        />
       </div>
 
-      <main className='z-10 relative w-full h-full md:w-[40%] md:m-auto md:h-[80%]  '>
-        {/* onboardingimage */}
+      <main className="relative z-10 flex min-h-0 w-full flex-1">
         <Swiper
-          modules={[Pagination, Navigation, Autoplay]}
-
-          pagination={{
-            clickable: true,
-          }}
+          modules={[Pagination, Autoplay]}
+          pagination={{ clickable: true }}
           slidesPerView={1}
           autoplay={{ delay: 4000, disableOnInteraction: false, stopOnLastSlide: true }}
           onSlideChange={(swiper) => setActiveId(swiper.activeIndex)}
-          className='w-full h-full relative z-20 '>
+          className="onboarding-swiper relative z-20 h-full w-full"
+        >
+          {onboardingSlides.map((slide, id) => (
+            <SwiperSlide key={slide.id}>
+              <div className="flex h-full min-h-0 flex-col items-center px-2 pb-14 pt-2 text-center">
+                <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+                  <img
+                    src={slide.image}
+                    alt={slide.title}
+                    className="h-[min(36dvh,15rem)] w-[min(72vw,17rem)] object-contain"
+                  />
+                  <h2 className="my-3 text-[clamp(1.75rem,7vw,2.25rem)] font-bold leading-tight text-[#2f2f2f]">
+                    {slide.title}
+                  </h2>
+                  <p className="mt-1 w-[82%] text-[clamp(1rem,4.5vw,1.25rem)] leading-snug text-gray-600">
+                    {slide.subtitle}
+                  </p>
+                </div>
 
-          {onboardingSlides.map((slide, id)=>
-
-          (<SwiperSlide key={slide.id}>
-            <div className=" flex flex-col h-full items-center text-center md:pt-6">
-              <img src={slide.image} alt="" className="w-70 h-60 md:w-70 md:h-70 object-contain" />
-              <h2 className="text-3xl md:text-2xl font-bold my-4">{slide.title}</h2>
-              <p className="text-gray-600 text-xl md:text-lg mt-2 md:w-[70%] md:mx-auto ">{slide.subtitle}</p>
-
-              {id === onboardingSlides.length - 1 && activeId === id && (
-                <button onClick={()=>navigate("/home")} className='button cursor-pointer mt-4 w-[50%] md:w-[50%] px-6 md:px-4 py-3 md:py-2 bg-[#f4a52c] text-white text-xl md:text-sm font-semibold md:font-bold rounded-4xl relative bottom-0'>{slide.buttonText}</button>
-              )}
-            
-            </div>
-          </SwiperSlide>)
-
-          )}
-
+                <div className="flex min-h-16 items-start justify-center">
+                  {id === onboardingSlides.length - 1 && activeId === id && (
+                    <button
+                      onClick={() => navigate("/home")}
+                      className="button mt-2 min-w-[10rem] whitespace-nowrap px-5 py-3 text-base leading-none sm:text-lg"
+                    >
+                      {slide.buttonText}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
         </Swiper>
       </main>
-
-
     </section>
-  )
-}
+  );
+};
 
 export default Onboarding;

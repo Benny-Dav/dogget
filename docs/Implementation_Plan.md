@@ -1,8 +1,45 @@
 # Dogget Implementation Plan (Phased)
 
-**Source**: Synthesised from `docs/Dogget_PRD_v2.md` (§1.4 ground truth, §11 launch plan) against verified repo state as of 2026-04-26.
+**Source**: Synthesised from `docs/Dogget_PRD_v2.md` (§1.4 ground truth, §11 launch plan) against verified repo state as of 2026-04-30.
 **Target**: ~9 weeks, solo full-time. Each phase ends with a staging deploy.
 **Strategy** *(revised 2026-04-26)*: **frontend-first.** Build all UI surfaces against a typed mock-API layer, then do a single backend integration phase, then payments + ops, then launch hardening. This avoids paying the integration tax while UI shapes are still in flux and lets each surface ship to staging the day it's done.
+
+## Current repo audit (2026-04-30)
+
+Based on the current codebase, the project is at **Phase 4 complete on mocks**:
+
+- **Phase 0 — DONE.** Monorepo structure exists under `apps/web` and `apps/api`; the mobile-only frame is active in `apps/web/src/App.jsx`.
+- **Phase 1A — DONE.** Onboarding, Home, Shop, Register, and Login routes/screens exist.
+- **Phase 1B — DONE.**
+  - Mock API layer exists in `apps/web/src/lib/api/` with hooks, mocks, money formatting, and a real-api placeholder.
+  - `Shop.jsx` is migrated to `useProducts()`, and home sections use `useFeaturedProducts()` / `useCategories()`.
+  - Zustand stores exist for auth, cart, wishlist, currency, and UI state.
+  - Firebase client auth is wired; `authStore` exchanges the Firebase ID token through `api.auth.session(idToken)`.
+  - Home greeting now prefers the mock session user (`authStore.me`), so the Phase-1B "Hi, Demo User" path is satisfied.
+  - `cartStore.sync()` and `wishlistStore.sync()` now hit the mock API contract instead of remaining as local stubs.
+- **Phase 2 — SUBSTANTIALLY DONE.**
+  - `/products/:slug` exists with gallery, vendor trust badge, quantity stepper, wishlist toggle, Add to Cart, markdown-style description, related products, reviews, and shipping accordion.
+  - `/shop` has deep-linkable search, category/sort/page state, advanced filter drawer, applied filter state, search suggestions, and visible pagination.
+  - `ProductCard` takes full Product data, supports wishlist, opens detail pages, and quick-adds to cart.
+  - Product review display exists; review submission/edit/flag workflows remain Phase 6.
+- **Phase 3 — SUBSTANTIALLY DONE.**
+  - `/cart`, `/wishlist`, `/checkout/address`, `/checkout/shipping`, `/checkout/payment`, `/checkout/confirmation/:id`, `/orders`, and `/orders/:id` routes exist.
+  - Cart groups by vendor, supports quantity changes, move-to-wishlist, delete confirmation, checkout drawer, and bottom-nav cart badge.
+  - Checkout uses a 3-step address/shipping/payment wizard. Payment is Paystack-only for launch; COD is deferred. No raw card details are collected in Dogget.
+  - Mock order confirmation/history/detail persist in `checkoutStore`.
+  - Remaining Phase 3 polish: save-for-later naming, receipt print CSS, drift warnings, auth-gating decisions, and stronger empty/error states.
+- **Phase 4 — DONE ON MOCKS.**
+  - `/vendor/apply`, `/vendor`, `/vendor/products`, `/vendor/orders`, `/vendor/coupons`, `/vendor/settings`, `/vendor/payouts`, and `/vendors/:slug` routes/screens exist.
+  - Vendor dashboard, products, orders, coupons, settings, payouts, and public storefront render against current mock product/vendor data plus small local vendor fixtures.
+  - Vendor access guard states, mock create/edit product flows, order status/tracking transitions, coupon pause/resume, payout detail receipts, and storefront filtering/sorting are in place for frontend QA.
+- **Phase 5 — NOT STARTED.** No admin routes/screens yet.
+- **Phase 6 — PARTIALLY TOUCHED, NOT COMPLETE.** Product review display exists and `currencyStore` exists, but `/profile`, address CRUD, review submission/edit/flag, vendor replies, saved payment placeholder, and full multi-currency UI are not complete.
+- **Phase 7 — EARLY SCAFFOLDING ONLY.**
+  - `apps/api` already contains a Fastify server, Firebase Admin auth plugin, `POST /auth/session`, `POST /auth/register`, and `GET/PATCH /users/me`.
+  - This does **not** count as Phase-7 integration progress yet because the Prisma schema is still limited to `User` + `Address`, there are no catalog/cart/order endpoints, and `apps/web/src/lib/api/real.js` is still unimplemented.
+- **Phases 8-9 — NOT STARTED.**
+
+Practical read: customer-facing catalog/cart/checkout UI and the vendor module are in place on mocks. The next milestone is Phase 5 admin UI, then Phase 6 profile/reviews/multi-currency before backend cutover.
 
 ---
 
@@ -57,7 +94,7 @@ Homepage, onboarding, login screen, Shop page scaffolding (against `content/prod
 
 ---
 
-## Phase 1B — Mock-API layer + Stores 🔄 IN PROGRESS
+## Phase 1B — Mock-API layer + Stores ✅ DONE
 
 ### API layer ✅
 - `apps/web/src/lib/api/` scaffolded: types, format, mocks (products/categories/brands/vendors), mock impl, real placeholder, TanStack Query hooks.
@@ -121,7 +158,7 @@ Homepage, onboarding, login screen, Shop page scaffolding (against `content/prod
 ### Checkout flow (UI shells, no real payments)
 - `/checkout/address` — guest inline form / authed picker, Ghana region dropdown.
 - `/checkout/shipping` — per-vendor shipping line items.
-- `/checkout/payment` — Paystack / Stripe / COD radio cards. No SDK calls — selection is just UI state.
+- `/checkout/payment` — Paystack-only for launch. Pay online launches Paystack Checkout, where Paystack presents enabled channels such as Mobile Money and Card. No raw card details are collected in Dogget. Mock discount codes can be applied before payment and reduce VAT/total.
 - `/checkout/review` — totals (subtotal, VAT 15%, shipping, promo), terms checkbox, "Place order" button calls `api.checkout.session()` (mock returns a confirmation).
 - `/checkout/confirmation/:id` — success screen.
 
@@ -135,17 +172,21 @@ Homepage, onboarding, login screen, Shop page scaffolding (against `content/prod
 ## Phase 4 — Vendor module UI (on mocks)
 
 ### Registration
-- `/vendor/apply` form (store name, slug, currency, region, logo upload stub, business type).
+- `/vendor/apply` form captures store name, registered business name, owner name and ID, required business certificate/proof/license upload, internal contact details, operating address, intended product categories, payout details, and verification consent.
+- Business type and store description are intentionally excluded from MVP registration. Approval depends on identity, business proof, and payout verification instead of self-declared seller type.
 
 ### Dashboard (`VendorLayout`, route guard `role=VENDOR` against mock user)
+- `/vendor/*` is protected by `VendorLayout`: approved vendors/admins see the workspace, pending vendors see an under-review state, and blocked/customer users are sent to `/vendor/apply`. Until backend roles exist, local mock access defaults to `APPROVED` and can be tested via `localStorage.setItem("dogget.mockVendorAccess", "PENDING")` or `"BLOCKED"`.
 - `/vendor` overview: today orders, 7d orders, 30d GMV, pending count, low-stock count (all from mock aggregates).
-- `/vendor/products`: CRUD table + editor, image upload stub (no real Cloudinary yet), Zod validation, up to 6 images.
-- `/vendor/orders`: table with status filter, detail drawer with transition buttons + tracking entry.
-- `/vendor/settings`: shipping rule (FLAT / BY_REGION / FREE_OVER_THRESHOLD), COD toggle, display currency.
-- `/vendor/payouts`: Gross / Commission (10%) / Net with mock recent runs.
+- `/vendor/products`: mock product create/edit drawer, shared category/brand selectors, price and stock validation, draft/published toggle, image URL upload stub (no real Cloudinary yet).
+- `/vendor/orders`: mock status filters, order detail drawer, item lines, customer/delivery details, timeline, tracking entry, processing -> shipped -> delivered transitions, and cancel/refund placeholder.
+- `/vendor/coupons`: mock vendor-funded discount code management with percentage/fixed discounts, minimum order, usage limits, active/paused state, and checkout application.
+- `/vendor/settings`: store profile, verification status summary, shipping rules (flat / by-region / free-over-threshold), payout account summary, and returns policy.
+- `/vendor/payouts`: available/paid summary, payout schedule/threshold, status filters, payout detail drawer, gross/commission/net breakdown, method/reference/timeline, and mock receipt export.
 
 ### Public storefront (`/vendors/:slug`)
-- Header, badges (verified, COD, rating), product grid with filters, contact links.
+- Header, verified/rating/region badges, retention-safe buyer-protection copy, category filters, in-stock toggle, sort control, filtered product grid, loading and empty states.
+- **Retention rule:** storefront stays inside Dogget and does **not** expose direct phone / WhatsApp / email / Instagram contact links in MVP. Vendor identity is visible for trust, but buyer communication and conversion stay on-platform.
 
 **Exit**: every vendor screen renders against mocks; flipping a `mockUser.role` to `VENDOR` reveals the full module.
 
@@ -196,6 +237,8 @@ Route guard `role=ADMIN`. Admin role only assigned via backend (FR-A06) — in m
 
 Goal: replace the mock impl with a real one, end-to-end. No new UI in this phase.
 
+**Integration checkpoint:** real infrastructure starts here, after the mock UI surface is complete through Phase 6. This is when Neon, Prisma schema, real Fastify endpoints, auth enforcement, real catalog/cart/wishlist/order persistence, and `apps/web/src/lib/api/real.js` are implemented. Paystack is **not** integrated in Phase 7; checkout remains UI-only until Phase 8.
+
 ### Database
 - Provision Neon project (single `main` branch in production, branch-per-deploy only for previews).
 - Apply full Prisma schema per PRD §6 (Vendor, Brand, Category, Subcategory, Product, ProductImage, Cart, CartItem, WishlistItem, Order, OrderItem, Payment, PayoutRun/Line, Review, PromoCode, FxRate, Notification, AuditLog, CheckoutSession, SearchQueryLog, HomeBanner).
@@ -226,15 +269,17 @@ Goal: replace the mock impl with a real one, end-to-end. No new UI in this phase
 
 UI exists from Phases 4–6 — this phase wires the server-side logic behind the screens.
 
+**Payment integration checkpoint:** Paystack is integrated here, after Phase 7 has real users, products, carts, checkout sessions, and orders. The server initializes Paystack transactions, verifies webhooks, reconciles stuck sessions, and atomically promotes paid split-orders.
+
 ### Checkout
 - `CheckoutSession` model (30-min TTL, cron cleanup).
 - `POST /checkout/session` with split-order preview (one sub-order per vendor), per-vendor shipping recompute, VAT 15% line, promo code validation, FX rate frozen onto session.
 
 ### Payments
-- Paystack popup (cards + MoMo) in GHS; server converts total to GHS via frozen FX.
-- Stripe Checkout Sessions (USD/EUR) behind `FEATURE_STRIPE` flag.
-- COD path (only when every vendor in cart has `codEnabled`).
-- Webhooks: `POST /webhooks/paystack` (HMAC-SHA512 verify), `POST /webhooks/stripe` (signature verify). Idempotent by `providerRef`. Atomic PENDING → PAID across all sub-orders.
+- Paystack Checkout (cards + MoMo) in GHS; server converts total to GHS via frozen FX.
+- Paystack international card acceptance enabled on the Paystack account if approved.
+- COD deferred until Dogget has reliable cash collection, vendor remittance, dispute handling, and audit workflows.
+- Webhooks: `POST /webhooks/paystack` (HMAC-SHA512 verify). Idempotent by `providerRef`. Atomic PENDING → PAID across all sub-orders.
 - Reconcile cron every 10 min for stuck sessions (E-05).
 - Auto-cancel `PENDING > 2h` cron.
 
@@ -262,7 +307,7 @@ UI exists from Phases 4–6 — this phase wires the server-side logic behind th
 ### Emails (Resend + React Email)
 - `order-placed`, `vendor-new-order`, `payment-confirmed`, `order-cancelled`, `order-shipped`, `order-delivered`, `cod-paid`, `vendor-approved`, `vendor-rejected`, `vendor-new-review`, `review-reply`, `review-cta` (3 days post-DELIVERED).
 
-**Exit**: end-to-end purchase (Paystack + COD minimum) on staging with two vendors in one cart. Vendor and admin actions persist and trigger correct emails.
+**Exit**: end-to-end Paystack purchase on staging with two vendors in one cart. Vendor and admin actions persist and trigger correct emails.
 
 ---
 
@@ -323,11 +368,11 @@ PRD §11.3 Go/No-Go (10 criteria); private beta (20 users) → public beta → G
 2. Promo codes UI (`/admin/promos`) — keep DB-only admin entry.
 3. Review-CTA reminder email.
 4. Admin `/admin/users`, `/admin/payouts` UIs — operable via DB in emergency (PRD A-4).
-5. Stripe path (feature-flag off, Paystack + COD only).
+5. Alternative gateway path (deferred unless Paystack coverage proves insufficient).
 6. Vendor review reply.
 7. Variant group UI.
 
-**Keep** (non-negotiable for launch): auth, catalog, cart, checkout (Paystack + COD), split orders, vendor CRUD + approvals, admin moderation, FX override, PWA, emails for order lifecycle.
+**Keep** (non-negotiable for launch): auth, catalog, cart, checkout (Paystack), split orders, vendor CRUD + approvals, admin moderation, FX override, PWA, emails for order lifecycle.
 
 ---
 

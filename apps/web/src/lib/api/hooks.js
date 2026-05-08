@@ -35,6 +35,14 @@ export function useProduct(slug) {
   });
 }
 
+export function useProductsByIds(ids = []) {
+  return useQuery({
+    queryKey: ["products", "byIds", ids],
+    queryFn: () => api.products.byIds(ids),
+    enabled: ids.length > 0,
+  });
+}
+
 export function useRelatedProducts(slug, limit) {
   return useQuery({
     queryKey: queryKeys.products.related(slug),

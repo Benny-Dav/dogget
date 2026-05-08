@@ -84,7 +84,7 @@ Dogget provides:
 
 1. A curated multi-vendor marketplace where Dogget Official (first-party) and approved third-party vendors list dog/pet products under a shared quality bar.
 2. A mobile-first PWA (installable, offline-capable for browsing) optimized for 2G/3G conditions common in Ghana.
-3. Guest-friendly checkout with local (Paystack / Mobile Money) and international (Stripe) payment paths, plus optional Cash on Delivery per vendor.
+3. Guest-friendly checkout with Paystack as the primary online payment gateway for Mobile Money and cards. Cash on Delivery is deferred until Dogget has a reliable collection/remittance process.
 4. Multi-currency display (vendors price in their currency; buyers see their preferred currency, converted at daily FX rates; FX locked at order placement).
 5. Vendor self-service: registration, product CRUD, order management, and public storefront page.
 6. Admin moderation: vendor approvals, product moderation, review moderation, promos, FX override.
@@ -132,7 +132,7 @@ The repo at `/Users/benedicta/Documents/dogget-pwa/dogget` contains a partial fr
 - Filters, server-side search with autocomplete, sorting, pagination
 - Cart (local-first, server sync), wishlist (authenticated)
 - Guest checkout + optional account creation at confirmation
-- Paystack (GHS + Mobile Money + cards), Stripe (international cards), COD per-vendor-toggle
+- Paystack (GHS + Mobile Money + local/international cards, subject to Paystack approval)
 - Multi-currency display with daily FX, FX frozen at order placement
 - VAT 15% line item at checkout (Ghana)
 - Cross-vendor cart → split into one order per vendor at checkout
@@ -165,7 +165,7 @@ The repo at `/Users/benedicta/Documents/dogget-pwa/dogget` contains a partial fr
 ### 2.1 Objectives & Key Results
 
 **O1 — Ship a trustworthy commerce MVP in Ghana within 8 weeks.**
-- KR1.1: End-to-end purchase flow live (browse → cart → checkout → Paystack/Stripe/COD → confirmation → vendor fulfillment) with at least one real transaction on launch day.
+- KR1.1: End-to-end purchase flow live (browse → cart → checkout → Paystack → confirmation → vendor fulfillment) with at least one real transaction on launch day.
 - KR1.2: Zero P0 bugs open at public-beta go-live; < 5 P1 bugs.
 - KR1.3: Lighthouse mobile Performance > 85, Accessibility > 90.
 
@@ -176,7 +176,7 @@ The repo at `/Users/benedicta/Documents/dogget-pwa/dogget` contains a partial fr
 
 **O3 — Validate demand & retention in 90 days post-launch.**
 - KR3.1: 200+ registered buyers.
-- KR3.2: 50+ paid orders (COD or card/MoMo).
+- KR3.2: 50+ paid orders (card/MoMo via Paystack).
 - KR3.3: Cart-to-order conversion ≥ 5% on returning visitors.
 - KR3.4: Week-4 buyer retention ≥ 15%.
 
@@ -246,7 +246,7 @@ The repo at `/Users/benedicta/Documents/dogget-pwa/dogget` contains a partial fr
 
 **Persona D — Ekow, Expat Buyer**
 - 40, tech worker from the US living in Accra.
-- Prefers prices in USD, pays with Visa via Stripe, wants international brands (e.g., Royal Canin, Furminator).
+- Prefers prices in USD, pays with Visa through Paystack where international card acceptance is enabled, wants international brands (e.g., Royal Canin, Furminator).
 
 **Persona E — Nana, Admin (Founder)**
 - Reviews vendor apps within 48h, moderates reviews flagged by users, adjusts FX fallback when API is down, issues promo codes for launch.
@@ -264,7 +264,7 @@ Priorities: **P0** must ship in MVP; **P1** should ship; **P2** deferred.
 | US-05 | Buyer | read verified-purchase reviews with photos | I trust the product before buying | P0 |
 | US-06 | Buyer | add to cart without logging in | I do not hit friction early | P0 |
 | US-07 | Buyer | check out as a guest and optionally create an account on the confirmation screen | I convert even if I do not want to register | P0 |
-| US-08 | Buyer | pay with Mobile Money, card, or choose Cash on Delivery when the vendor allows it | I use the method I already trust | P0 |
+| US-08 | Buyer | pay with Mobile Money or card through Paystack | I use the method I already trust | P0 |
 | US-09 | Buyer | save multiple addresses and reuse them | I switch between home and office shipping | P1 |
 | US-10 | Buyer | save a payment method (tokenized) | checkout is faster next time | P1 |
 | US-11 | Buyer | apply a promo code | I get a discount I received | P1 |
@@ -277,7 +277,7 @@ Priorities: **P0** must ship in MVP; **P1** should ship; **P2** deferred.
 | US-18 | Vendor | receive a decision within 48h with reason on rejection | I know what to fix | P0 |
 | US-19 | Vendor | create, edit, hide, and delete products with up to 6 images | my catalog stays fresh | P0 |
 | US-20 | Vendor | set my display currency and shipping rules (flat, by region, free-over) | I control fulfillment economics | P0 |
-| US-21 | Vendor | toggle Cash on Delivery per store | I only accept it when safe | P0 |
+| US-21 | Vendor | configure fulfillment and delivery terms | I only accept orders I can fulfill safely | P0 |
 | US-22 | Vendor | manage orders and update status (processing, shipped, delivered) | buyers stay informed | P0 |
 | US-23 | Vendor | reply to a review (once per review) | I can clarify or thank the buyer | P1 |
 | US-24 | Vendor | view gross sales, 10% commission, net payout in my dashboard | I understand my earnings | P0 |
@@ -388,7 +388,7 @@ Conventions:
 | FR-D01 | Homepage hero banner (admin-configurable promo card) | P0 | Bannersource: admin-set `HomeBanner` or fallback to static. |
 | FR-D02 | Category carousel | P0 | Existing `CategoriesSection`. |
 | FR-D03 | Recommended products | P0 | MVP = most recent + featured; no personalization. |
-| FR-D04 | Trust section (badges: verified vendors, Paystack, secure, COD where available) | P0 | Existing `TrustSection`. |
+| FR-D04 | Trust section (badges: verified vendors, Paystack, secure checkout) | P0 | Existing `TrustSection`. |
 | FR-D05 | CTA section (email capture → Resend contact list, optional) | P1 | Nice-to-have. |
 | FR-D06 | Ad section (internal promo slot, admin-set) | P1 | No third-party ads in MVP. |
 
@@ -412,7 +412,7 @@ Route: `/products/:slug`
 | FR-P12 | Related products (same category, different product, top 8) | P1 | |
 | FR-P13 | Variant group links (if `variantGroupId` present, show sibling variants as size chips) | P1 | |
 | FR-P14 | Share button (Web Share API fallback to copy link) | P1 | |
-| FR-P15 | "Shipping & Returns" accordion showing vendor's shipping rules + COD availability | P0 | Computed from Vendor settings. |
+| FR-P15 | "Shipping & Returns" accordion showing vendor's shipping rules and return policy | P0 | Computed from Vendor settings. |
 | FR-P16 | Breadcrumb: Home › Category › Subcategory › Product | P1 | |
 
 ### 4.4 Cart
@@ -454,12 +454,11 @@ Route: `/checkout`
 4. Server groups items by vendor → splits into N pending orders; computes per-vendor shipping per vendor's rules.
 5. Buyer optionally enters promo code; server validates and applies discount (per-vendor or cart-wide per code config).
 6. Server adds VAT (15%) line per vendor order on eligible items (rule: all product sales are VAT-able in MVP).
-7. Buyer selects payment: Paystack, Stripe, or COD (only if every vendor in cart offers COD).
-8. For Paystack/Stripe: server initiates payment with total; buyer completes in popup / redirect.
+7. Buyer selects Pay online. Paystack presents the enabled online channels (for example Mobile Money and Card) inside its Checkout UI.
+8. Server initializes a Paystack transaction with total; buyer completes payment in Paystack Popup / redirect.
 9. Webhook confirms payment → all child orders flip to PAID.
-10. For COD: child orders go to PROCESSING immediately; payment is marked PAID on delivery by vendor.
-11. Confirmation screen shown; guest buyer offered "Create an account" with pre-filled info.
-12. Confirmation emails sent to buyer and each vendor.
+10. Confirmation screen shown; guest buyer offered "Create an account" with pre-filled info.
+11. Confirmation emails sent to buyer and each vendor.
 
 #### 4.6.2 Requirements
 
@@ -472,7 +471,7 @@ Route: `/checkout`
 | FR-CO05 | Cross-vendor cart split displayed as N sub-orders with per-vendor totals | P0 | |
 | FR-CO06 | VAT 15% shown as separate line per sub-order | P0 | |
 | FR-CO07 | Promo code entry validates and shows accepted discount amount | P1 | Server-validated; once applied, stored in CheckoutSession. |
-| FR-CO08 | Payment method selector disables COD if any vendor in cart has COD disabled | P0 | Tooltip explains why. |
+| FR-CO08 | Payment method is Paystack-only for launch | P0 | COD is deferred until Dogget has a collection/remittance process. |
 | FR-CO09 | On payment init, CheckoutSession marked `LOCKED`; any cart mutation post-lock rejects | P0 | |
 | FR-CO10 | If payment pop-up closed / fails, CheckoutSession stays valid 30 min; buyer can retry | P0 | |
 | FR-CO11 | Order confirmation page shows order numbers (one per vendor), totals, expected delivery window per vendor | P0 | |
@@ -486,25 +485,25 @@ Route: `/checkout`
 
 | ID | Requirement | Priority | Notes |
 |---|---|---|---|
-| FR-PM01 | Paystack popup integration (JS) for cards + Mobile Money (MTN, Vodafone/Telecel, AirtelTigo) in GHS | P0 | Transaction initialized server-side; popup uses reference. |
-| FR-PM02 | Stripe Checkout Sessions for international cards; currencies USD/EUR | P1 | `mode: payment`. |
-| FR-PM03 | All payment verifications are server-side via webhooks (Paystack `charge.success`, Stripe `checkout.session.completed`) | P0 | Idempotent handlers keyed by provider transaction id. |
-| FR-PM04 | Webhook signature verified with Paystack / Stripe secrets | P0 | |
+| FR-PM01 | Paystack Popup / Redirect integration for cards + Mobile Money (MTN, Vodafone/Telecel, AirtelTigo) in GHS | P0 | Transaction initialized server-side; Paystack Checkout presents enabled channels. |
+| FR-PM02 | Paystack international card acceptance for eligible customers | P0 | Requires Paystack international payments enabled/approved for the Dogget business. Ghana settlement remains GHS unless Paystack enables otherwise. |
+| FR-PM03 | All online payment verifications are server-side via Paystack webhook `charge.success` and verify endpoint | P0 | Idempotent handlers keyed by provider transaction id/reference. |
+| FR-PM04 | Webhook signature verified with Paystack secret | P0 | |
 | FR-PM05 | Payment total = sum of all sub-order totals (items + shipping + VAT − discount) in buyer's display currency | P0 | Paystack requires GHS → if buyer display is non-GHS, convert total to GHS using frozen FX. |
 | FR-PM06 | On successful payment, all sub-orders move PENDING → PAID atomically | P0 | DB transaction. |
 | FR-PM07 | On failed payment, sub-orders stay PENDING; buyer sees error; retry available | P0 | |
-| FR-PM08 | Cash on Delivery flow: sub-order goes PENDING → PROCESSING immediately (no payment collected online); vendor marks PAID on delivery | P0 | Only offered if every vendor in cart has COD enabled. |
+| FR-PM08 | Cash on Delivery is not available at launch | P0 | Revisit after delivery operations, cash collection, vendor remittance, and dispute handling are defined. |
 | FR-PM09 | Saved cards: Paystack tokenization (`authorization_code`) stored encrypted; allow one-click reuse | P1 | Feature-flagged; PCI out of scope because token is handled by Paystack. |
-| FR-PM10 | Refunds: manual-only in MVP, initiated by admin via Paystack/Stripe dashboards; audit logged | P0 | No UI for buyer refund requests. |
+| FR-PM10 | Refunds: manual-only in MVP, initiated by admin via Paystack dashboard; audit logged | P0 | No UI for buyer refund requests. |
 | FR-PM11 | Payment receipt email with itemized breakdown and FX disclosure | P0 | |
 | FR-PM12 | Payout to vendor: commission (10%) deducted; vendor sees Gross / Commission / Net in dashboard; actual payout is manual in MVP (admin initiates bank/MoMo transfer weekly) | P0 | `PayoutRun` and `PayoutLine` tables track this. |
-| FR-PM13 | Reconciliation page for admin: daily Paystack/Stripe totals vs. sum of PAID orders | P1 | |
+| FR-PM13 | Reconciliation page for admin: daily Paystack totals vs. sum of PAID orders | P1 | |
 
 ### 4.8 Orders & Order Lifecycle
 
 #### 4.8.1 Status model
 
-**Online payment path** (Paystack / Stripe):
+**Online payment path** (Paystack):
 
 `PENDING` → `PAID` → `PROCESSING` → `SHIPPED` → `DELIVERED`
                           ↓                               ↑
@@ -512,23 +511,15 @@ Route: `/checkout`
                                                           |
                                                     (no returns in MVP)
 
-**Cash on Delivery path**:
-
-`PENDING` → `PROCESSING` → `SHIPPED` → `DELIVERED` → `PAID`
-                  ↓
-             `CANCELLED` (pre-shipment)
-
 Transitions:
 
 | From | To | Actor | Trigger |
 |---|---|---|---|
 | — | PENDING | System | Order created at checkout |
-| PENDING | PAID | System | Paystack/Stripe webhook OK |
-| PENDING | PROCESSING | System | COD order created |
+| PENDING | PAID | System | Paystack webhook OK |
 | PAID | PROCESSING | Vendor | "Acknowledge / Start fulfilling" |
 | PROCESSING | SHIPPED | Vendor | "Mark shipped" + optional tracking |
-| SHIPPED | DELIVERED | Vendor / Buyer | Vendor marks delivered (online) or buyer confirms (COD requires vendor mark) |
-| DELIVERED | PAID | Vendor | (COD only) — cash received |
+| SHIPPED | DELIVERED | Vendor / Buyer | Vendor marks delivered or buyer confirms |
 | PENDING/PAID/PROCESSING | CANCELLED | Admin or Vendor | Pre-shipment only; refund required for PAID |
 | SHIPPED or later | CANCELLED | — | Not allowed in MVP |
 
@@ -543,7 +534,7 @@ Transitions:
 | FR-O05 | Vendor order list at `/vendor/orders` with filters by status | P0 | |
 | FR-O06 | Vendor can update status per transitions above; invalid transitions reject with 422 | P0 | |
 | FR-O07 | Vendor can attach tracking info (carrier + tracking number + URL) on SHIPPED transition | P1 | Included in email. |
-| FR-O08 | Admin can force-cancel any pre-shipment order; admin can flip COD order to DELIVERED in exceptional cases | P0 | Requires reason; audit logged. |
+| FR-O08 | Admin can force-cancel any pre-shipment order | P0 | Requires reason; audit logged. |
 | FR-O09 | Buyer can cancel a PENDING order from order detail (rare; usually auto-cancel) | P1 | |
 | FR-O10 | Orders with status = PENDING for > 2h are auto-cancelled by cron | P0 | |
 | FR-O11 | Order detail page prints receipt (browser print CSS) | P1 | |
@@ -552,7 +543,7 @@ Transitions:
 
 | ID | Requirement | Priority | Notes |
 |---|---|---|---|
-| FR-R01 | Only buyers with an order of status DELIVERED (or PAID for COD) containing the product can write a review | P0 | Server enforces. |
+| FR-R01 | Only buyers with an order of status DELIVERED containing the product can write a review | P0 | Server enforces. |
 | FR-R02 | One review per {userId, productId}; edit allowed within 30 days | P0 | |
 | FR-R03 | Review fields: rating 1–5, title (optional, ≤ 80 chars), body (optional, ≤ 1000 chars), photos (0–3 Cloudinary URLs) | P0 | |
 | FR-R04 | Vendor can post one public reply per review (≤ 500 chars) | P1 | |
@@ -600,7 +591,7 @@ Route: `/vendor`
 | FR-V12 | Product editor form: all fields in 4.2.1; image uploader (Cloudinary direct, signed upload) | P0 | Zod validation. |
 | FR-V13 | Orders table, filter by status, open detail | P0 | |
 | FR-V14 | Order detail: status transition buttons per 4.8; buyer's name + phone + shipping address; tracking entry; internal notes | P0 | |
-| FR-V15 | Storefront settings: shipping rule (flat / by-region / free-over-threshold), COD toggle, display currency, shipping regions served, return policy text (display only; no workflow in MVP) | P0 | |
+| FR-V15 | Storefront settings: shipping rule (flat / by-region / free-over-threshold), display currency, shipping regions served, return policy text (display only; no workflow in MVP) | P0 | |
 | FR-V16 | Payouts: view Gross, Commission (10%), Net; recent payout runs list | P0 | |
 | FR-V17 | Reviews moderation (reply only; flag for admin) | P1 | |
 | FR-V18 | Storefront preview: "View my storefront" opens `/vendors/:slug` | P1 | |
@@ -611,9 +602,9 @@ Route: `/vendors/:slug`
 
 | ID | Requirement | Priority | Notes |
 |---|---|---|---|
-| FR-V20 | Public page: vendor logo, name, description, rating avg, review count, region, shipping summary, COD badge | P0 | |
+| FR-V20 | Public page: vendor logo, name, description, rating avg, review count, region, shipping summary | P0 | |
 | FR-V21 | Grid of vendor's active products with filters (category, price, rating, in-stock) | P0 | |
-| FR-V22 | "Contact vendor" link (mailto + phone `tel:` on mobile) | P1 | |
+| FR-V22 | Direct vendor contact links (mailto / phone / WhatsApp) | Deferred post-MVP | **Not exposed in MVP.** Vendor identity remains visible for trust, but buyer communication and conversion should stay on-platform to reduce off-Dogget leakage. |
 
 ### 4.12 Admin Panel
 
@@ -644,7 +635,6 @@ Provider: **Resend** (React Email templates). Fallback: SendGrid.
 | Payment confirmed | Buyer + Vendor | `payment-confirmed.tsx` |
 | Order shipped | Buyer | `order-shipped.tsx` — tracking if any |
 | Order delivered | Buyer | `order-delivered.tsx` — review CTA |
-| COD payment collected | Buyer + Vendor | `cod-paid.tsx` |
 | Order cancelled | Buyer + Vendor | `order-cancelled.tsx` |
 | Vendor registered | Admin | `vendor-pending.tsx` |
 | Vendor approved | Vendor | `vendor-approved.tsx` |
@@ -700,7 +690,7 @@ Provider: **Resend** (React Email templates). Fallback: SendGrid.
 | FR-FX03 | All price displays show conversion when buyer currency ≠ product currency | P0 | |
 | FR-FX04 | Rate used at checkout is frozen and shown on receipts | P0 | |
 | FR-FX05 | Paystack charges must be in GHS; server converts total to GHS for Paystack if needed using frozen rate | P0 | |
-| FR-FX06 | Stripe charges use buyer's preferred currency if supported (USD, EUR); else fallback to GHS | P1 | |
+| FR-FX06 | Online checkout charges through Paystack in GHS for MVP; non-GHS buyer displays are converted to a frozen GHS charge amount | P0 | International card acceptance depends on Paystack approval. |
 | FR-FX07 | Buyer currency choice persisted in `localStorage` and server profile | P0 | |
 
 #### 4.15.3 VAT
@@ -727,7 +717,7 @@ Provider: **Resend** (React Email templates). Fallback: SendGrid.
 | NFR-08 | Security | HTTPS everywhere | TLS 1.2+, HSTS 6 months |
 | NFR-09 | Security | All protected endpoints verify Firebase ID token server-side | 100% |
 | NFR-10 | Security | OWASP Top 10 covered (XSS, CSRF, SQLi, SSRF, auth) | `helmet`, Prisma parameterization, `dompurify` on rich text render, CSRF not needed for token auth but enforced on cookie-based flows (admin) |
-| NFR-11 | Security | No PCI scope: card data never touches our server | Paystack popup, Stripe Checkout redirects |
+| NFR-11 | Security | No PCI scope: card data never touches our server | Paystack Checkout handles card/mobile money entry |
 | NFR-12 | Security | Input validation on every endpoint (Zod) | Reject 400 on invalid |
 | NFR-13 | Security | Rate limiting: 60 req/min per IP on `/products*`, 20 req/min on `/auth/*`, 10 req/min on `/checkout/*` | Fastify rate-limit plugin |
 | NFR-14 | Security | Secrets in env vars only; never in client bundle except `VITE_*` safe keys | Enforced via CI check |
@@ -815,8 +805,6 @@ enum OrderStatus {
 
 enum PaymentProvider {
   PAYSTACK
-  STRIPE
-  COD
 }
 
 enum PaymentStatus {
@@ -932,7 +920,6 @@ model Vendor {
   businessType    String?   // "Individual" / "Registered"
   shippingRule    ShippingRule @default(FLAT)
   shippingConfig  Json      // flat rate, by-region map, threshold etc.
-  codEnabled      Boolean   @default(false)
   returnPolicy    String?
   approved        Boolean   @default(false)
   approvedAt      DateTime?
@@ -1163,7 +1150,7 @@ model Payment {
   order            Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId          String          @unique
   provider         PaymentProvider
-  providerRef      String          // Paystack reference / Stripe session id
+  providerRef      String          // Paystack reference
   status           PaymentStatus   @default(INITIATED)
   amount           Int             // minor units in charge currency
   currency         Currency
@@ -1447,11 +1434,8 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 | PATCH | `/checkout/session/:id` | Same session | Update `shippingAddress`, `promoCode` |
 | POST | `/checkout/session/:id/promo` | Same session | Validate + apply code |
 | DELETE | `/checkout/session/:id/promo` | Same session | Remove |
-| POST | `/checkout/paystack` | Same session | Body `{ sessionId }` → returns `{ reference, publicKey, amountMinor, currency: "GHS" }` to launch popup |
-| POST | `/checkout/stripe` | Same session | Returns Stripe Checkout Session URL |
-| POST | `/checkout/cod` | Same session | Creates sub-orders directly in PROCESSING |
+| POST | `/checkout/paystack` | Same session | Body `{ sessionId }` → returns `{ accessCode, reference, publicKey, amountMinor, currency: "GHS" }` to launch Paystack Checkout |
 | POST | `/webhooks/paystack` | Webhook (signature) | |
-| POST | `/webhooks/stripe` | Webhook (signature) | |
 | GET | `/orders` | Auth | Scoped by role (customer: own; vendor: their store's; admin: all). Query: `status`, `page` |
 | GET | `/orders/:id` | Auth (owner/vendor/admin) | |
 | PATCH | `/orders/:id/status` | Auth (vendor) | `{ toStatus, trackingCarrier?, trackingNumber?, trackingUrl? }` |
@@ -1537,8 +1521,7 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 |---|---|---|---|
 | **Firebase Auth** | Buyer/vendor identity | Client SDK for sign-up/login; server verifies ID token with Admin SDK on every protected request | Token invalid → 401; degraded login → show provider fallback (email) |
 | **Firebase Admin SDK** | Token verification, admin role claims | Initialized server-side with service account JSON stored in `FIREBASE_SERVICE_ACCOUNT_B64` | If init fails, server refuses to start (fail-closed) |
-| **Paystack** | GHS cards + Mobile Money | Server initializes transaction → returns reference → client opens popup → server verifies via webhook `charge.success` | Webhook lost → reconcile endpoint pulls transaction status on schedule |
-| **Stripe** | International cards | Server creates Checkout Session → redirect → `checkout.session.completed` webhook | Similar reconcile via `stripe.checkout.sessions.retrieve` |
+| **Paystack** | GHS cards + Mobile Money + approved international cards | Server initializes transaction → returns access code/reference → client opens Paystack Checkout → server verifies via webhook `charge.success` and verify endpoint | Webhook lost → reconcile endpoint pulls transaction status on schedule |
 | **Cloudinary** | Image hosting / transforms | Signed upload from client using short-lived signature from `POST /uploads/cloudinary-signature`; server never handles binary | Upload fails → client retry with exponential backoff; signature TTL 10 min |
 | **exchangerate.host** | FX rates | Daily cron at 00:00 UTC fetches base=GHS rates to USD/EUR/NGN and inverse | On 3 consecutive failures, Sentry alert; fallback to last-known rate or admin override |
 | **Resend** | Transactional email | Server sends via `resend.emails.send`; React Email templates | Retries up to 3x with exponential backoff; failed notifications flagged in admin |
@@ -1574,16 +1557,16 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 ### 8.2 Paystack integration notes
 
 - Use Paystack Popup v2 for cards + Mobile Money (MTN, Vodafone/Telecel, AirtelTigo).
-- Server `POST /transaction/initialize` returns `reference`. Client `PaystackPop.setup({ key, email, amount, ref })`.
+- Server `POST /transaction/initialize` returns `access_code` and `reference`. Client resumes Paystack Checkout with the access code; Paystack presents all payment channels enabled on the Dogget Paystack dashboard.
 - Webhook endpoint `POST /webhooks/paystack` verifies `x-paystack-signature` HMAC-SHA512 with `PAYSTACK_SECRET_KEY`.
 - On `charge.success`, load Order by `Payment.providerRef`; idempotently flip to PAID.
 - Amount MUST be in pesewas (GHS minor unit = 100 pesewas per 1 GHS).
 
-### 8.3 Stripe integration notes
+### 8.3 Online payment UI notes
 
-- Use Checkout Sessions (`mode: "payment"`, success/cancel URLs, `metadata: { checkoutSessionId }`).
-- Webhook `checkout.session.completed` → load order set → flip to PAID.
-- For Ghana users paying by card, consider Paystack first; Stripe is for international expat buyers.
+- Dogget's payment page should summarize delivery, items, totals, and show a single `Pay with Paystack` CTA for online payment.
+- Dogget should not collect raw card details in the app. Card, Mobile Money, and any other enabled online channels are selected inside Paystack Checkout.
+- Cash on Delivery is deferred until Dogget has reliable delivery collection, vendor remittance, dispute handling, and audit workflows.
 
 ### 8.4 Cloudinary patterns
 
@@ -1633,11 +1616,11 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 7. If buyer creates account → Firebase sign-up → server links orders by email → buyer lands on `/orders`.
 8. If buyer skips → receives an email with a magic link (Firebase email-link sign-in) valid 24h to access orders.
 
-#### Flow 3 — Cross-vendor cart with COD
+#### Flow 3 — Cross-vendor cart payment
 
-1. Cart has items from Vendor A (COD enabled) and Vendor B (COD disabled).
-2. Checkout payment selector: COD is disabled with tooltip "Not all vendors in your cart accept Cash on Delivery".
-3. Buyer either removes Vendor B items or pays online.
+1. Cart has items from Vendor A and Vendor B.
+2. Checkout shows split vendor shipping and a single combined Paystack total.
+3. Buyer pays online through Paystack; webhook confirms payment for all child orders atomically.
 
 #### Flow 4 — Vendor onboarding
 
@@ -1645,7 +1628,7 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 2. Fills store form → submits → status: Pending Review.
 3. Admin reviews in `/admin/vendors?status=pending`, approves.
 4. Vendor receives approval email → can now access full dashboard.
-5. Vendor creates first products, configures shipping rule & COD.
+5. Vendor creates first products and configures shipping rules.
 6. Storefront goes live at `/vendors/kwames-pet-supplies`.
 
 #### Flow 5 — Vendor order fulfillment
@@ -1654,7 +1637,7 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 2. Opens `/vendor/orders/DOG-00042-A`; sees shipping address and items.
 3. Taps Acknowledge → PROCESSING.
 4. Packs order. Taps Mark Shipped → enters carrier + tracking; status SHIPPED.
-5. On delivery (COD), collects cash, marks Delivered + Paid. Online path just marks Delivered.
+5. On delivery, marks order Delivered.
 6. Net payout line added to next run.
 
 #### Flow 6 — Admin approval
@@ -1694,7 +1677,7 @@ All endpoints are under `/api/v1`. JSON only. Auth via `Authorization: Bearer <f
 | `/vendor/products/new` | VendorLayout | Product form | Missing | Yes |
 | `/vendor/orders` | VendorLayout | Orders table, detail drawer | Missing | Yes |
 | `/vendor/payouts` | VendorLayout | Runs list | Missing | Yes |
-| `/vendor/settings` | VendorLayout | Shipping, COD, profile | Missing | Yes |
+| `/vendor/settings` | VendorLayout | Shipping, profile | Missing | Yes |
 | `/admin` | AdminLayout | KPI cards + quick links | Missing | Yes (basic) |
 | `/admin/vendors` | AdminLayout | Approval queue | Missing | Yes |
 | `/admin/products` | AdminLayout | Moderation list | Missing | Yes |
@@ -1761,9 +1744,9 @@ Scale (rem): H1 1.875 / H2 1.5 / H3 1.25 / Body 1 / Small 0.875 / Micro 0.75. Li
 |---|---|---|
 | E-01 | Mixed-currency cart (vendor A in GHS, vendor B in USD) | Display in buyer's preferred currency; at checkout, split-order charges remain in each vendor's currency; buyer pays a combined total converted at frozen FX |
 | E-02 | Out-of-stock race (two buyers last unit) | Server checks inventory in transaction at order creation; loser gets 409 with affected item list; UI highlights items to remove |
-| E-03 | Payment fails mid-popup | CheckoutSession persists; user retries without recreating; inventory not decremented until PAID or COD PROCESSING |
+| E-03 | Payment fails mid-popup | CheckoutSession persists; user retries without recreating; inventory not decremented until PAID |
 | E-04 | Webhook arrives twice | Idempotent by `Payment.providerRef`; second arrival is no-op |
-| E-05 | Webhook never arrives | Reconcile cron every 10 min polls Paystack/Stripe for SessionIds older than 10 min; promotes if SUCCEEDED |
+| E-05 | Webhook never arrives | Reconcile cron every 10 min polls Paystack for SessionIds older than 10 min; promotes if SUCCEEDED |
 | E-06 | Split-order partial failure (one vendor's pre-save fails) | All-or-nothing DB transaction; CheckoutSession unlocks; buyer sees a user-friendly error |
 | E-07 | Vendor deactivates product while in someone's cart | At checkout, server drops inactive items with toast "X is no longer available"; cart recomputes |
 | E-08 | Vendor deactivates (self) with open orders | Storefront hidden, products hidden; open orders remain fulfillable; payouts still computed |
@@ -1778,7 +1761,6 @@ Scale (rem): H1 1.875 / H2 1.5 / H3 1.25 / Body 1 / Small 0.875 / Micro 0.75. Li
 | E-17 | Buyer rapid-clicks Add to Cart | Debounced 200ms; increments by the button click count |
 | E-18 | Network drops mid-navigation | SW serves cached page; top banner "Offline — some actions unavailable" |
 | E-19 | SW update available | Toast bottom-right: "New version available — Refresh"; sticky until dismissed or accepted |
-| E-20 | COD order never paid (dispute) | Admin can force-cancel and mark reason |
 | E-21 | Product inventory decremented then order cancelled | On cancel, restore inventory (transaction); audit logged |
 | E-22 | Buyer enters non-Ghana region but Paystack requires GH | Allowed since billing address differs from shipping; vendor decides if they ship there |
 | E-23 | Vendor mass-edits inventory to 0 | Products auto show Out of Stock; cart items flagged unavailable on next load |
@@ -1796,14 +1778,14 @@ Scale (rem): H1 1.875 / H2 1.5 / H3 1.25 / Body 1 / Small 0.875 / Micro 0.75. Li
  ----------------------                               -------
  Vite build → static → Vercel (Edge, global CDN)     vercel.app
    │  Firebase Auth SDK
-   │  Paystack Popup / Stripe Redirect
+  │  Paystack Checkout
    │  Cloudinary direct upload (signed)
    │  Zustand stores, React Query cache
    │  Service Worker (Workbox)
    ▼
  API (Node 20 + Fastify + Prisma)
    │  Firebase Admin SDK (token verify, role claims)
-   │  Paystack / Stripe SDK (init + webhook verify)
+  │  Paystack SDK/API (init + webhook verify)
    │  Cloudinary SDK (sign)
    │  Resend SDK
    │  exchangerate.host (cron)
@@ -1831,7 +1813,7 @@ Scale (rem): H1 1.875 / H2 1.5 / H3 1.25 / Body 1 / Small 0.875 / Micro 0.75. Li
 | ORM | Prisma | Schema-first; strong TS types |
 | DB | PostgreSQL 15+ (Neon, serverless) | FTS + `pg_trgm` + JSON; branching for migrations |
 | Auth | Firebase Auth (client) + Firebase Admin (server) | Fast to ship; supports email + Google |
-| Payments | Paystack + Stripe | Ghana + international |
+| Payments | Paystack | Ghana Mobile Money, local cards, and approved international cards |
 | Media | Cloudinary | Existing image URLs |
 | Email | Resend + React Email | Clean DX, good templates |
 | FX | exchangerate.host | Free, reliable |
@@ -1859,10 +1841,10 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 
 ### 10.5 Security controls
 
-- `helmet` on Fastify with strict CSP: `default-src 'self'; img-src 'self' data: https://res.cloudinary.com; script-src 'self' https://js.paystack.co https://js.stripe.com; connect-src 'self' https://api.exchangerate.host https://firebaseauth.googleapis.com ...`
+- `helmet` on Fastify with strict CSP: `default-src 'self'; img-src 'self' data: https://res.cloudinary.com; script-src 'self' https://js.paystack.co; connect-src 'self' https://api.exchangerate.host https://firebaseauth.googleapis.com ...`
 - Secrets via Railway + Vercel env var stores; rotated on compromise.
 - Signed Cloudinary uploads only.
-- Paystack + Stripe webhook signature verification required; reject on mismatch.
+- Paystack webhook signature verification required; reject on mismatch.
 - Rate limits per table in NFR-13.
 - Prisma parameterized queries; no raw SQL outside of migrations and one FTS ranking query (parameterized).
 - `helmet` + CORS allowlist: `https://dogget.app`, `https://www.dogget.app`, preview `*.vercel.app`.
@@ -1923,8 +1905,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 - CheckoutSession model + endpoints.
 - Split-order logic.
 - VAT + promo code application.
-- Paystack init + webhook; COD path.
-- Stripe init + webhook.
+- Paystack init + webhook.
 - Orders list + detail pages.
 - Vendor order status transitions.
 - Emails: order placed, payment confirmed, new order.
@@ -1933,7 +1914,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 - Vendor registration + approval.
 - Vendor product CRUD (with Cloudinary signed upload).
 - Vendor orders table + detail.
-- Vendor shipping rule + COD toggle.
+- Vendor shipping rule.
 - Vendor payouts view.
 - Admin: dashboard, vendor approval, product/review moderation, orders, FX override, promos.
 
@@ -1980,7 +1961,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 | # | Criterion | Required |
 |---|---|---|
 | G-1 | All P0 bugs = 0 | Yes |
-| G-2 | At least one successful real transaction per payment method (Paystack card, Paystack MoMo, Stripe card, COD) | Yes |
+| G-2 | At least one successful real transaction per Paystack payment channel used at launch (card and MoMo minimum) | Yes |
 | G-3 | At least 3 vendors approved with ≥ 10 products each | Yes |
 | G-4 | Lighthouse mobile Perf ≥ 80, A11y ≥ 85 | Yes |
 | G-5 | SW installable on Chrome + Safari (iOS add-to-home) | Yes |
@@ -1995,7 +1976,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 - Vercel: one-click "Promote previous deployment".
 - Railway: redeploy previous container image tag.
 - DB migrations are forward-only; for bad migration, apply a *compensating* migration (e.g., `drop column` added erroneously). Keep `prisma migrate status` clean; tag each release.
-- Feature flags (via env vars) for risky features: `FEATURE_STRIPE`, `FEATURE_COD`, `FEATURE_PROMOS`. Flip off without redeploy by updating env.
+- Feature flags (via env vars) for risky features: `FEATURE_PROMOS`. Flip off without redeploy by updating env.
 
 ### 11.5 Post-launch operations (solo founder)
 
@@ -2009,7 +1990,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 ## 12. Future Phases
 
 **Phase 2 (approx. Weeks 10–20): Services + Community**
-- Pet services booking (vet, groomer, walker) with calendar + availability + one-off payments (reuse Paystack/Stripe).
+- Pet services booking (vet, groomer, walker) with calendar + availability + one-off payments (reuse Paystack).
 - Wellness tracker (vaccination, weight, allergies) — extends user profile into Pawfile proper (pet identity fields).
 - Community forums / Q&A (Discourse-like simple MVP).
 - SMS + WhatsApp notifications via Hubtel and WhatsApp Business API.
@@ -2032,8 +2013,8 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 
 | # | Assumption | Risk if wrong | Mitigation |
 |---|---|---|---|
-| A-1 | Target buyers have reliable 3G+ and comfort with MoMo | Fewer conversions | PWA offline-first, COD, aggressive perf budget |
-| A-2 | Paystack MoMo covers MTN + Telecel + AirtelTigo with acceptable fees | Payment friction | Document Stripe fallback; Flutterwave in Phase 2 if needed |
+| A-1 | Target buyers have reliable 3G+ and comfort with MoMo/card payment | Fewer conversions | PWA offline-first, aggressive perf budget, revisit COD after operations are defined |
+| A-2 | Paystack covers MTN + Telecel + AirtelTigo MoMo, local cards, and approved international cards with acceptable fees | Payment friction | Evaluate Flutterwave, Stripe, or COD later only if Paystack coverage is insufficient |
 | A-3 | Enough vendors exist locally to seed 8+ by launch | Empty marketplace | Dogget Official acts as anchor; aggressive outreach Week 5 |
 | A-4 | 8-week solo timeline is realistic given fixed scope | Launch slip | Cut list: `/admin/payouts` UI can be DB-only admin if time-constrained; FX admin override can be env-var |
 | A-5 | Firebase Auth free tier covers MVP scale | Cost overrun | Monitor DAU |
@@ -2047,7 +2028,7 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 
 | # | Risk | Sev | Likelihood | Mitigation |
 |---|---|---|---|---|
-| R-1 | Payment chargeback / fraud | H | L | Paystack/Stripe fraud tools; no stored PAN |
+| R-1 | Payment chargeback / fraud | H | L | Paystack fraud tools; no stored PAN |
 | R-2 | Vendor listing abuse (counterfeit, illegal items) | H | M | Admin moderation + terms of service; takedown SLA |
 | R-3 | Data breach | H | L | Least-privilege IAM, env secrets, Prisma, `helmet`, regular npm audit |
 | R-4 | Cloudinary bandwidth spike | M | M | Cache SW, `q_auto`, alert at 50% |
@@ -2073,10 +2054,8 @@ Alternative: keep two repos if monorepo tooling is a detour. Recommendation: **m
 | FTS | Full-Text Search (Postgres `tsvector` + GIN) |
 | FX | Foreign Exchange |
 | VAT | Value Added Tax (Ghana 15%) |
-| COD | Cash on Delivery |
 | GMV | Gross Merchandise Value |
 | Paystack | African payment processor (cards, MoMo, bank) |
-| Stripe | International card processor |
 | Cloudinary | Image CDN / transform service |
 | Resend | Transactional email provider |
 | Firebase Auth | Google-hosted identity provider |
@@ -2098,7 +2077,6 @@ VITE_FIREBASE_STORAGE_BUCKET=dogget-a8eb8.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=1:595235478975:web:eb223b3bec03012d43950a
 VITE_PAYSTACK_PK=pk_live_xxx
-VITE_STRIPE_PK=pk_live_xxx
 VITE_CLOUDINARY_CLOUD_NAME=dfb2hl46r
 VITE_SENTRY_DSN_CLIENT=...
 VITE_PLAUSIBLE_DOMAIN=dogget.app
@@ -2121,10 +2099,6 @@ FIREBASE_SERVICE_ACCOUNT_B64=<base64-encoded JSON>
 PAYSTACK_SECRET_KEY=sk_live_xxx
 PAYSTACK_WEBHOOK_SECRET=sk_live_xxx
 
-# Stripe
-STRIPE_SECRET_KEY=sk_live_xxx
-STRIPE_WEBHOOK_SECRET=whsec_xxx
-
 # Cloudinary
 CLOUDINARY_CLOUD_NAME=dfb2hl46r
 CLOUDINARY_API_KEY=...
@@ -2141,8 +2115,6 @@ EXCHANGERATE_API_URL=https://api.exchangerate.host
 SENTRY_DSN_SERVER=...
 
 # Feature flags
-FEATURE_STRIPE=true
-FEATURE_COD=true
 FEATURE_PROMOS=true
 ```
 
@@ -2155,7 +2127,6 @@ FEATURE_PROMOS=true
 - Firebase Admin SDK: https://firebase.google.com/docs/admin/setup
 - Paystack Popup: https://paystack.com/docs/payments/accept-payments/
 - Paystack Webhooks: https://paystack.com/docs/payments/webhooks/
-- Stripe Checkout: https://docs.stripe.com/checkout
 - Cloudinary Upload (signed): https://cloudinary.com/documentation/upload_images#generating_authentication_signatures
 - exchangerate.host: https://exchangerate.host/
 - Resend: https://resend.com/docs
@@ -2182,7 +2153,7 @@ FEATURE_PROMOS=true
 | OQ-5: Firebase Auth long-term? | **Keep** Firebase + server token verify via Admin SDK | Speed to ship; no migration in MVP |
 | OQ-6: Content moderation approach | **Admin queue** for vendor approval + review moderation + flag system | Basic but real |
 | OQ-7: Min order / free shipping threshold | **Vendor decides** via shipping rule `FREE_OVER_THRESHOLD` | Vendor flexibility |
-| A-1: Reliable 3G assumption | Softened with PWA offline-first + COD fallback | — |
+| A-1: Reliable 3G assumption | Softened with PWA offline-first; COD deferred until collection/remittance operations are defined | — |
 | Variants handling unspecified | **MVP: separate products + optional `variantGroupId`**; proper variants Phase 2 | Simpler data model now |
 | Reviews not specified | **Verified-purchase only**, photos, vendor reply, admin moderation | Trust and quality |
 | Cross-vendor cart behavior unspecified | **Split-order** (one Order per vendor, linked by `orderGroupId`); single payment total | Cleanest financial model |

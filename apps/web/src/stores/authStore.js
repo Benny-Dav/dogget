@@ -7,6 +7,8 @@ import {
   observeAuth,
 } from "../firebase/firebaseAuth";
 import { api } from "../lib/api";
+import { useCartStore } from "./cartStore";
+import { useWishlistStore } from "./wishlistStore";
 
 const toAuthUser = (firebaseUser) =>
   firebaseUser
@@ -118,6 +120,10 @@ export const useAuthStore = create((set) => ({
       try {
         const idToken = await firebaseUser.getIdToken();
         const me = await api.auth.session(idToken);
+        await Promise.all([
+          useCartStore.getState().sync(),
+          useWishlistStore.getState().sync(),
+        ]);
         set({ me, idToken, sessionLoading: false });
       } catch (error) {
         set({ sessionLoading: false, error: mapAuthError(error) });

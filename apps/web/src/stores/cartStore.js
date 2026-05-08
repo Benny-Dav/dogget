@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { api } from "../lib/api";
 
 // Cart items are kept locally and persisted to dogget.cart.v1.
 // On login, `sync()` reconciles with the server (mock no-op until Phase 7).
@@ -13,6 +14,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
  * @property {string|null} sizeLabel
  * @property {string} vendorId
  * @property {string} vendorName
+ * @property {boolean} vendorCodEnabled
  * @property {import("../lib/api/types.js").Money} unitPrice
  * @property {number} quantity
  * @property {number} stockCount
@@ -27,6 +29,7 @@ const fromProduct = (product) => ({
   sizeLabel: product.sizeLabel,
   vendorId: product.vendor.id,
   vendorName: product.vendor.name,
+  vendorCodEnabled: product.vendor.codEnabled,
   unitPrice: product.price,
   quantity: 1,
   stockCount: product.stockCount,
@@ -96,6 +99,7 @@ export const useCartStore = create(
           const g = groups.get(i.vendorId) ?? {
             vendorId: i.vendorId,
             vendorName: i.vendorName,
+            vendorCodEnabled: i.vendorCodEnabled,
             items: [],
           };
           g.items.push(i);
@@ -104,9 +108,23 @@ export const useCartStore = create(
         return Array.from(groups.values());
       },
 
-      // Stub for Phase 7 — server reconciles cart on login.
       sync: async () => {
-        // Real impl: api.cart.sync(get().items) and merge by max(quantity).
+        const synced = await api.cart.sync(get().items);
+        const nextItems = synced.items.map((item) => ({
+          productId: item.productId,
+          slug: item.product.slug,
+          title: item.product.title,
+          imageUrl: item.product.images[0]?.url ?? "",
+          sizeLabel: item.product.sizeLabel,
+          vendorId: item.product.vendor.id,
+          vendorName: item.product.vendor.name,
+          vendorCodEnabled: item.product.vendor.codEnabled,
+          unitPrice: item.unitPriceSnapshot,
+          quantity: item.quantity,
+          stockCount: item.product.stockCount,
+        }));
+        set({ items: nextItems });
+        return synced;
       },
     }),
     {

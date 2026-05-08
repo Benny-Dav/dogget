@@ -5,9 +5,37 @@ import { products as ALL_PRODUCTS } from "./mocks/products.js";
 import { categories as ALL_CATEGORIES } from "./mocks/categories.js";
 import { brands as ALL_BRANDS } from "./mocks/brands.js";
 import { vendors as ALL_VENDORS } from "./mocks/vendors.js";
+import { calculateCouponDiscount, findActiveCoupon } from "../../features/vendor/vendorMock.js";
 
 const LATENCY_MS = 200;
 const delay = (ms = LATENCY_MS) => new Promise((r) => setTimeout(r, ms));
+
+const toMoney = (amount, currency = "GHS") => ({ amount, currency });
+const SHIPPING_FEES = {
+  STANDARD: 1200,
+  EXPRESS: 2200,
+};
+const VAT_RATE = 0.15;
+
+/** @param {import("./types.js").GuestCartItem[]} items */
+function toCart(items) {
+  const subtotalAmount = items.reduce((sum, item) => sum + item.unitPrice.amount * item.quantity, 0);
+  return {
+    id: null,
+    items: items.map((item, index) => {
+      const product = ALL_PRODUCTS.find((candidate) => candidate.id === item.productId);
+      if (!product) return null;
+      return {
+        id: `cart_item_${index + 1}`,
+        productId: item.productId,
+        product,
+        quantity: Math.max(1, Math.min(item.quantity, product.stockCount)),
+        unitPriceSnapshot: item.unitPrice,
+      };
+    }).filter(Boolean),
+    subtotal: toMoney(subtotalAmount, items[0]?.unitPrice.currency ?? "GHS"),
+  };
+}
 
 /** @param {import("./types.js").Product} p @param {import("./types.js").ProductFilters} f */
 function matches(p, f) {
@@ -68,6 +96,14 @@ export const mockApi = {
       return p;
     },
 
+    /** @param {string[]} ids */
+    async byIds(ids) {
+      await delay();
+      return ids
+        .map((id) => ALL_PRODUCTS.find((product) => product.id === id))
+        .filter(Boolean);
+    },
+
     /** @param {string} slug @param {number} [limit] */
     async related(slug, limit = 4) {
       await delay();
@@ -118,10 +154,9 @@ export const mockApi = {
     /**
      * Exchanges a Firebase ID token for a server session + User row.
      * Mock returns a fake CUSTOMER user. Real impl will POST /auth/session.
-     * @param {string} _idToken
      * @returns {Promise<import("./types.js").User>}
      */
-    async session(_idToken) {
+    async session() {
       await delay();
       return {
         id: "user_mock_1",
@@ -150,6 +185,79 @@ export const mockApi = {
       await delay();
       const me = await mockApi.users.me();
       return { ...me, ...patch, updatedAt: new Date().toISOString() };
+    },
+  },
+
+  cart: {
+    /** @param {import("./types.js").GuestCartItem[]} items */
+    async sync(items) {
+      await delay();
+      return toCart(items);
+    },
+  },
+
+  wishlist: {
+    /** @param {string[]} productIds */
+    async sync(productIds) {
+      await delay();
+      return productIds.filter((productId, index, all) => {
+        if (all.indexOf(productId) !== index) return false;
+        return ALL_PRODUCTS.some((product) => product.id === productId);
+      });
+    },
+  },
+
+  checkout: {
+    /**
+     * @param {{
+     *   items: import("./types.js").GuestCartItem[],
+     *   address: import("./types.js").CheckoutAddress,
+     *   shippingMethod?: import("./types.js").CheckoutShippingMethod,
+     *   paymentMethod: import("./types.js").CheckoutPaymentMethod,
+     *   couponCode?: string,
+     * }} input
+     * @returns {Promise<import("./types.js").CheckoutSession>}
+     */
+    async session(input) {
+      await delay(350);
+      if (input.paymentMethod !== "PAYSTACK") {
+        throw new Error("Paystack is the only checkout payment method enabled for launch.");
+      }
+      const subtotalAmount = input.items.reduce(
+        (sum, item) => sum + item.unitPrice.amount * item.quantity,
+        0
+      );
+      const vendorCount = new Set(input.items.map((item) => item.vendorId)).size;
+      const shippingFeePerVendor = SHIPPING_FEES[input.shippingMethod ?? "STANDARD"] ?? SHIPPING_FEES.STANDARD;
+      const shippingAmount = vendorCount * shippingFeePerVendor;
+      const coupon = input.couponCode ? findActiveCoupon(input.couponCode) : null;
+      const discountAmount = calculateCouponDiscount(coupon, subtotalAmount);
+      const taxableAmount = Math.max(0, subtotalAmount - discountAmount);
+      const vatAmount = Math.round(taxableAmount * VAT_RATE);
+      const totalAmount = taxableAmount + shippingAmount + vatAmount;
+      const currency = input.items[0]?.unitPrice.currency ?? "GHS";
+
+      return {
+        id: `chk_${Date.now()}`,
+        orderGroupId: `DOG-${String(Date.now()).slice(-6)}`,
+        subtotal: toMoney(subtotalAmount, currency),
+        discount: toMoney(discountAmount, currency),
+        coupon: coupon
+          ? {
+              code: coupon.code,
+              name: coupon.name,
+              type: coupon.type,
+              value: coupon.value,
+            }
+          : null,
+        shipping: toMoney(shippingAmount, currency),
+        vat: toMoney(vatAmount, currency),
+        total: toMoney(totalAmount, currency),
+        shippingMethod: input.shippingMethod ?? "STANDARD",
+        paymentMethod: input.paymentMethod,
+        address: input.address,
+        createdAt: new Date().toISOString(),
+      };
     },
   },
 };

@@ -2,8 +2,9 @@ import { Bell } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
 
 const GreetingSection = () => {
-  const user = useAuthStore((s) => s.user);
-  const firstName = user?.name?.trim().split(/\s+/)[0];
+  const me = useAuthStore((s) => s.me);
+  const displayName = me?.name ?? null;
+  const firstName = displayName?.trim().split(/\s+/)[0];
   const greeting = firstName ? `Hi ${firstName}!` : "Hi there!";
 
   return (

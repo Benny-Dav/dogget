@@ -191,4 +191,56 @@
  * @property {string} addedAt
  */
 
+/**
+ * @typedef {Object} CheckoutAddress
+ * @property {string} recipient
+ * @property {string} phone
+ * @property {string} line1
+ * @property {string=} line2
+ * @property {string} city
+ * @property {string} region
+ * @property {string=} countryCode
+ * @property {string} country
+ */
+
+/**
+ * @typedef {"PAYSTACK"} CheckoutPaymentMethod
+ */
+
+/**
+ * @typedef {"STANDARD" | "EXPRESS"} CheckoutShippingMethod
+ */
+
+/**
+ * @typedef {Object} CheckoutSession
+ * @property {string} id
+ * @property {string} orderGroupId
+ * @property {Money} subtotal
+ * @property {Money} shipping
+ * @property {Money} vat
+ * @property {Money} total
+ * @property {CheckoutShippingMethod=} shippingMethod
+ * @property {CheckoutPaymentMethod} paymentMethod
+ * @property {CheckoutAddress} address
+ * @property {string} createdAt
+ */
+
+/**
+ * Guest-cart payload sent from the persisted cart store during Phase 1B.
+ * Mirrors the local cart shape closely so the mock and real APIs can share
+ * the same boundary.
+ * @typedef {Object} GuestCartItem
+ * @property {string} productId
+ * @property {string} slug
+ * @property {string} title
+ * @property {string} imageUrl
+ * @property {string|null} sizeLabel
+ * @property {string} vendorId
+ * @property {string} vendorName
+ * @property {boolean} vendorCodEnabled
+ * @property {Money} unitPrice
+ * @property {number} quantity
+ * @property {number} stockCount
+ */
+
 export {};

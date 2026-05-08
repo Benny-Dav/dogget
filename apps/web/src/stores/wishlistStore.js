@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { api } from "../lib/api";
 
 // Wishlist holds product IDs only — Product details are fetched on demand
 // via api.products.get(slug) inside the wishlist screen, so the store stays small.
@@ -36,9 +37,10 @@ export const useWishlistStore = create(
 
       clear: () => set({ productIds: [] }),
 
-      // Stub for Phase 7 — server reconciles wishlist on login.
       sync: async () => {
-        // Real impl: api.wishlist.sync(get().productIds).
+        const productIds = await api.wishlist.sync(get().productIds);
+        set({ productIds });
+        return productIds;
       },
     }),
     {
